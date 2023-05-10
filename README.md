@@ -1,3 +1,8 @@
+## To-do
+
+- check and fix the code
+
+---
 <p align="center">
     <img src="https://raw.githubusercontent.com/Farama-Foundation/MAgent2/main/MAgent2-text.png" width="500px"/>
 </p>
