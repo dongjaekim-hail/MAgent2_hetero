@@ -1,9 +1,9 @@
-from magent2.environments import adversarial_pursuit_v4
+from magent2.environments import hetero_adversarial_v1
 
 render_mode = 'human'
 # render_mode = 'rgb_array'
 env = adversarial_pursuit_v4.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
-max_cycles=500, extra_features=False, render_mode=render_mode)
+max_cycles=500, extra_features=False,render_mode=render_mode)
 
 for ep in range(1000):
 	env.reset()

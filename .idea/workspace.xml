@@ -4,119 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="init">
-      <change beforePath="$PROJECT_DIR$/.github/FUNDING.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/build-publish.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/gh-pages.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/pre-commit.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pre-commit-config.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CODE_OF_CONDUCT.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MANIFEST.in" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MAgent2-text.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/404.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/API/config.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/API/gridworld.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent-graph-1.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent-graph-2.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent2-github.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent2-text.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent2-white.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent2-white.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_static/img/magent2.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/conf.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/adversarial_pursuit.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/adversarial_pursuit.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/adversarial_pursuit_aec.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/battle.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/battle.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/battle_aec.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/battlefield.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/battlefield.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/battlefield_aec.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/combined_arms.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/combined_arms.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/combined_arms_aec.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/gather.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/gather.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/gather_aec.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/index.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/tiger_deer.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/tiger_deer.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/environments/tiger_deer_aec.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/index.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/introduction/basic_usage.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/introduction/key_concepts.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/legacy/Tutorial for Many Kinds of Agents.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/legacy/get_started.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/make.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/scripts/gen_mds.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/scripts/move404.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/scripts/utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent-graph-1.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent-graph-2.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/build.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/builtin/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/battle.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/double_attack.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/forest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/pursuit.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/c_lib.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environment.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/adversarial_pursuit/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/adversarial_pursuit/adversarial_pursuit.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/adversarial_pursuit_v4.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/battle/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/battle/battle.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/battle_v4.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/battlefield/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/battlefield/battlefield.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/battlefield_v5.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/combined_arms/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/combined_arms/combined_arms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/combined_arms_v6.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/gather/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/gather/gather.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/gather_v5.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/magent_env.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/tiger_deer/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/tiger_deer/tiger_deer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/tiger_deer_v4.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/gridworld.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/render.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/utility.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Environment.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/AgentType.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/AgentType.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/GridWorld.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/GridWorld.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/Map.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/Map.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/Range.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/RenderGenerator.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/RenderGenerator.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/RewardEngine.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/RewardEngine.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/grid_def.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gridworld/test.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/runtime_api.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/runtime_api.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/temp_c_booster.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utility/utility.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utility/utility.h" beforeDir="false" />
+    <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
+      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial_v1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,12 +39,13 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/dongjaekim/Documents/MAgent2_hetero",
+    "last_opened_file_path": "/Users/dongjaekim/Documents/MAgent2_hetero/magent2/environments/hetero_adversarial",
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/magent2/environments/hetero_adversarial" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/magent2" />
     </key>
@@ -161,6 +55,34 @@
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/MAgent2" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="MAgent2_hetero" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.test" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -192,7 +114,28 @@
       <option name="project" value="LOCAL" />
       <updated>1683736518712</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="init">
+      <created>1683738120679</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1683738120679</updated>
+    </task>
+    <task id="LOCAL-00005" summary="init">
+      <created>1683738140914</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1683738140914</updated>
+    </task>
+    <task id="LOCAL-00006" summary="update">
+      <created>1683766139471</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1683766139471</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -208,6 +151,38 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test.py</url>
+          <line>12</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/magent2/environments/adversarial_pursuit/adversarial_pursuit.py</url>
+          <line>146</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/magent2/environments/adversarial_pursuit/adversarial_pursuit.py</url>
+          <line>134</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py</url>
+          <line>194</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
