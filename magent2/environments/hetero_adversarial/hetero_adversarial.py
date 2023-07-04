@@ -195,7 +195,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
 class _parallel_env(magent_parallel_env, EzPickle):
     metadata = {
         "render_modes": ["human", "rgb_array"],
-        "name": "hetero_adversarial_v1",
+        "name": "adversarial_pursuit_v4",
         "render_fps": 5,
     }
 
