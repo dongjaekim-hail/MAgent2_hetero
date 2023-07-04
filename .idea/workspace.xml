@@ -5,11 +5,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
-      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial_v1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/builtin/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_linux.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/battle.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/double_attack.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/forest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/builtin/config/pursuit.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/c_lib.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environment.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/adversarial_pursuit/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/adversarial_pursuit/adversarial_pursuit.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/adversarial_pursuit_v4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/battle/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/battle/battle.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/battle_v4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/battlefield/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/battlefield/battlefield.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/battlefield_v5.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/combined_arms/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/combined_arms/combined_arms.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/combined_arms_v6.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/gather/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/gather/gather.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/gather_v5.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial_v1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/magent_env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/tiger_deer/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/tiger_deer/tiger_deer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/tiger_deer_v4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/gridworld.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/libmagent.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/render.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/testlib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/utility.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_updated.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +59,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -39,8 +79,8 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/dongjaekim/Documents/MAgent2_hetero/magent2/environments/hetero_adversarial",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+    "last_opened_file_path": "/home/hail2/Documents/MAgent2_hetero",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -56,8 +96,8 @@
       <recent name="$PROJECT_DIR$/MAgent2" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.test_linux">
+    <configuration name="test_linux" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="MAgent2_hetero" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -69,7 +109,28 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_linux.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test_updated" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="MAgent2_hetero" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_updated.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -80,7 +141,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
+        <item itemvalue="Python.test_linux" />
+        <item itemvalue="Python.test_updated" />
       </list>
     </recent_temporary>
   </component>
@@ -143,7 +205,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="linux" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -158,12 +232,12 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
+          <url>file://$PROJECT_DIR$/test_updated.py</url>
           <line>8</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
+          <url>file://$PROJECT_DIR$/test_updated.py</url>
           <line>12</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
@@ -181,6 +255,21 @@
           <url>file://$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py</url>
           <line>194</line>
           <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_linux.py</url>
+          <line>14</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_linux.py</url>
+          <line>10</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_linux.py</url>
+          <line>25</line>
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
