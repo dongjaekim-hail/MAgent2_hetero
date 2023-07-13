@@ -1,6 +1,4 @@
 """ some utility for call C++ code"""
-
-
 import ctypes
 import multiprocessing
 import os
