@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
-      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial_v1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial_v1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/libmagent.dylib" beforeDir="false" afterPath="$PROJECT_DIR$/magent2/libmagent.dylib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/testlib" beforeDir="false" afterPath="$PROJECT_DIR$/magent2/testlib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,11 +26,19 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="m2" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": -1
+}]]></component>
   <component name="ProjectId" id="2PbpCKIZxM11cIors70KpMgRkbN" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -39,17 +49,19 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/dongjaekim/Documents/MAgent2_hetero/magent2/environments/hetero_adversarial",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/junhyeonbae/PycharmProjects/MAgent2_hetero",
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/magent2/environments/hetero_adversarial" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/magent2/environments/hetero_adversarial" />
       <recent name="$PROJECT_DIR$/magent2" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/magent2/environments" />
       <recent name="$PROJECT_DIR$/magent2" />
       <recent name="$PROJECT_DIR$/build" />
       <recent name="$PROJECT_DIR$" />
@@ -157,16 +169,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>8</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>12</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/magent2/environments/adversarial_pursuit/adversarial_pursuit.py</url>
           <line>146</line>
