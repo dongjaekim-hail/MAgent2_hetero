@@ -126,6 +126,7 @@ default_reward_args = dict(tag_penalty=-0.2)
 # 이 인자들이 raw_env에 가게 된다.
 # tag_penalty=-0.2 와 render_mode=render_mode가 reward_args에 들어가 딕셔너리의 형태로 저장된다.
 # 결국 tag_penalty=-0.2 만 reward_args에 딕셔너리 형태로 저장된다.
+
 def parallel_env(
     map_size=default_map_size,
     max_cycles=max_cycles_default,
@@ -236,6 +237,11 @@ class _parallel_env(magent_parallel_env, EzPickle):
         "render_fps": 10,
     }
 
+    # default_map_size = 45,,
+    # minimap_mode_default = False
+    # max_cycles_default = 500
+    # default_reward_args = dict(tag_penalty=-0.2)
+    # extra_features=False
     def __init__(
         self,
         map_size,
@@ -274,12 +280,12 @@ class _parallel_env(magent_parallel_env, EzPickle):
             env,                #env = magent2.GridWorld(get_config(map_size, minimap_mode, **reward_args), map_size=map_size)
             handles,            #[c_int(0), c_int(1)]
             names,              #names = ["predator", "prey"]
-            map_size,           #첫
-            max_cycles,         #첫
+            map_size,           #map_size=45
+            max_cycles,         #max_cycles=500
             reward_range,       #[-4.2, 1.0]
-            minimap_mode,       #첫
-            extra_features,     #첫
-            render_mode,        #첫
+            minimap_mode,       #minimap_mode=False
+            extra_features,     #extra_features=False
+            render_mode,        #render_mode=None
         )
 
     def generate_map(self):
