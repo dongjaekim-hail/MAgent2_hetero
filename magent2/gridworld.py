@@ -3,7 +3,7 @@ import ctypes
 import importlib
 import os
 
-gimport numpy as np
+import numpy as np
 
 from magent2.c_lib import _LIB, as_float_c_array, as_int32_c_array
 from magent2.environment import Environment
