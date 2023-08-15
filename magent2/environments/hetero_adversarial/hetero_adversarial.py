@@ -121,7 +121,11 @@ max_cycles_default = 500
 minimap_mode_default = False
 default_reward_args = dict(tag_penalty=-0.2)
 
-
+# env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
+# max_cycles=500, extra_features=False,render_mode=render_mode)
+# 이 인자들이 raw_env에 가게 된다.
+# tag_penalty=-0.2 와 render_mode=render_mode가 reward_args에 들어가 딕셔너리의 형태로 저장된다.
+# 결국 tag_penalty=-0.2 만 reward_args에 딕셔너리 형태로 저장된다.
 def parallel_env(
     map_size=default_map_size,
     max_cycles=max_cycles_default,
@@ -135,7 +139,6 @@ def parallel_env(
     return _parallel_env(
         map_size, minimap_mode, env_reward_args, max_cycles, extra_features, render_mode
     )
-
 
 def raw_env(
     map_size=default_map_size,
@@ -151,11 +154,21 @@ def raw_env(
 
 env = make_env(raw_env)
 
-
+# get_config(map_size, minimap_mode, **reward_args)이고, reward_args에는
+# {’tag_penalty’ : -0.2}가 넘어간다.
+# get_config함수는 한번만 실행되므로...안에서 for문을 이용해야지 여러개의 predator들을 만들 수 있을 것 같다.
 def get_config(map_size, minimap_mode, tag_penalty):
     gw = magent2.gridworld
     cfg = gw.Config()
+                                    #그냥 우선 gridworld 통채로 가져오고 그 중에서 Config 클래스 객체만 하나 만든다.
+                                    #이때, cfg에는 다음과 같은  변수들이 존재한다.
+                                    # self.config_dict = {}
+                                    # self.agent_type_dict = {}
+                                    # self.groups = []
+                                    # self.reward_rules = []
 
+
+                                    #cfg.set( )에 넘겨준 인자들(딕셔너리들)을 config_dict에 그대로 복사한다.
     cfg.set({"map_width": map_size, "map_height": map_size})
     cfg.set({"minimap_mode": minimap_mode})
     cfg.set({"embedding_size": 10})
@@ -170,6 +183,9 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "attack_penalty": tag_penalty,
     }
     predator = cfg.register_agent_type("predator", options)
+                                    #self.agent_type_dict에 다음과 같이 predator의 option을 딕셔너리형태로 저장함.
+                                    #{'predator': {'attack_penalty': -0.2, 'attack_range': circle(2), 'hp': 1,
+                                    # 'length': 2, 'speed': 1, 'view_range': circle(5), 'width': 2}}
 
     options = {
         "width": 1,
@@ -181,22 +197,43 @@ def get_config(map_size, minimap_mode, tag_penalty):
     }
     prey = cfg.register_agent_type("prey", options)
 
-    predator_group = cfg.add_group(predator)
-    prey_group = cfg.add_group(prey)
+    predator_group = cfg.add_group(predator)         #cfg의 groups 리스트에 predator를 저장하고, 0을 반환한다. predator_group=0
+    prey_group = cfg.add_group(prey)                 #cfg의 groups 리스트에 prey를 저장하고, 1을 반환한다. prey_group=1
 
-    a = gw.AgentSymbol(predator_group, index="any")
-    b = gw.AgentSymbol(prey_group, index="any")
 
+                                                     #a = gw.AgentSymbol(0, index="any")을 넣는 것.
+    a = gw.AgentSymbol(predator_group, index="any")  #a=agent(0,-1)
+    b = gw.AgentSymbol(prey_group, index="any")      #b=agent(1,-1)   근데 이건 한번만 실행됨
+
+
+
+                               #cfg.add_reward_rule(gw.Event(agent(0,-1), "attack", agent(1,-1)), receiver=[a, b], value=[1, -1])
     cfg.add_reward_rule(gw.Event(a, "attack", b), receiver=[a, b], value=[1, -1])
-
+                                #gw.Event를 통해 gridworld에서 만든 Eventnode클래스의 객체인 Event 객체에 값을 주어 __call__을 호출한다.
+                                #__call__내부에는 node=Evnetnode()객체를 호출한다. 따라서 node객체에는
+                                # node = EventNode()
+                                # node.op = EventNode.OP_NOT     #node.op=7
+                                # node.inputs = [self]           #node.inputs=["attack",agent(1,-1)]
+                                #node.predicate = predicate      #node.predicate="attack"
+                                #다음과 같은 요소들이 있다. 이 요소들을 (a,"attack',b)으로 채우고, 이 node를 반환한다.
+                                # Predator’s reward is given as:
+                                # 1 reward for tagging a prey
+                                # -0.2 reward for tagging anywhere(tag_penalty option) 아무곳이나 터치하지 못하도록 벌을 줌
+                                # Prey’s reward is given as:
+                                # -1 reward for being tagged
+                                #attack이라는 행위에 대해서 a(predator)은 1점을 받고, b(prey)는 -1점을 받는다.
+                                #config클래스 안에 있는 함수임. self.reward_rules = [] 과 관련있음
+                                #[[<magent2.gridworld.EventNode object at 0x107745370>, [agent(0,-1), agent(1,-1)], [1, -1], False]]
+                                #이와 같이, reward.rules 라는 리스트에 다음과 같이 저장한다 gw.Event는 node를 반환하기에 저렇게 객체의 주소를 담는 것을 확인할 수 있다.
     return cfg
 
-
+                                #return _parallel_env(
+                                #map_size, minimap_mode, env_reward_args, max_cycles, extra_features, render_mode
 class _parallel_env(magent_parallel_env, EzPickle):
     metadata = {
         "render_modes": ["human", "rgb_array"],
         "name": "hetero_adversarial_v1",
-        "render_fps": 5,
+        "render_fps": 10,
     }
 
     def __init__(
@@ -221,24 +258,28 @@ class _parallel_env(magent_parallel_env, EzPickle):
         env = magent2.GridWorld(
             get_config(map_size, minimap_mode, **reward_args), map_size=map_size
         )
+        #class GridWorld
+        #def __init__(self, config, **kwargs): magent2.GridWorld의 인자이다. config이외의 키워드 인자는 딕셔너리로 흡수한다.
 
-        handles = env.get_handles()
-        reward_vals = np.array([1, -1, -1, -1, -1] + list(reward_args.values()))
-        reward_range = [
+
+        handles = env.get_handles()                                                 #[c_int(0), c_int(1)]
+        reward_vals = np.array([1, -1, -1, -1, -1] + list(reward_args.values()))    #[ 1.  -1.  -1.  -1.  -1.  -0.2]
+        reward_range = [                                                            #[-4.2, 1.0]
             np.minimum(reward_vals, 0).sum(),
             np.maximum(reward_vals, 0).sum(),
         ]
         names = ["predator", "prey"]
-        super().__init__(
-            env,
-            handles,
-            names,
-            map_size,
-            max_cycles,
-            reward_range,
-            minimap_mode,
-            extra_features,
-            render_mode,
+                             #중요한 건 이 파트구나.
+        super().__init__(    #magent_parallel_env 클래스의 __init__을 실행하는 것!
+            env,                #env = magent2.GridWorld(get_config(map_size, minimap_mode, **reward_args), map_size=map_size)
+            handles,            #[c_int(0), c_int(1)]
+            names,              #names = ["predator", "prey"]
+            map_size,           #첫
+            max_cycles,         #첫
+            reward_range,       #[-4.2, 1.0]
+            minimap_mode,       #첫
+            extra_features,     #첫
+            render_mode,        #첫
         )
 
     def generate_map(self):

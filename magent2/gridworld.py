@@ -1,10 +1,9 @@
 """gridworld interface"""
-
 import ctypes
 import importlib
 import os
 
-import numpy as np
+gimport numpy as np
 
 from magent2.c_lib import _LIB, as_float_c_array, as_int32_c_array
 from magent2.environment import Environment
@@ -683,8 +682,14 @@ class EventNode:
         self.predicate = None
 
         self.inputs = []
-
-    def __call__(self, subject, predicate, *args):
+                                                        # Event = EventNode()
+                                                        #왜 굳이 함수가 아닌 객체를 호출해서 __call__함수를 이요해서 객체를 함수처럼 이용
+                                                        #하는 걸까?
+                                                        #우선 EventNode 클래스의 인스턴스(객체)에는 op,predicate 라는 일반 변수,
+                                                        #inputs 이라는 리스트가 있다.
+                                                        # Event(agent(0,-1), "attack", agent(1,-1))
+                                                        # subject:agent(0,-1) args:(agent(1,-1),) predicate: 'attack'
+    def __call__(self, subject, predicate, *args):      #근데 왜 굳이 args를 *args으로 받았을까?  더 많은 인자를 넘겨줘도 되는 것 마냥
         node = EventNode()
         node.predicate = predicate
         if predicate == "kill":
@@ -701,8 +706,8 @@ class EventNode:
             x2, y2 = max(coor[0][0], coor[1][0]), max(coor[0][1], coor[1][1])
             node.inputs = [subject, x1, y1, x2, y2]
         elif predicate == "attack":
-            node.op = EventNode.OP_ATTACK
-            node.inputs = [subject, args[0]]
+            node.op = EventNode.OP_ATTACK              #node.op=7
+            node.inputs = [subject, args[0]]           #node.inputs=["attack",agent(1,-1)]
         elif predicate == "kill":
             node.op = EventNode.OP_KILL
             node.inputs = [subject, args[0]]
@@ -720,7 +725,7 @@ class EventNode:
             node.inputs = [subject]
         else:
             raise Exception("invalid predicate of event " + predicate)
-        return node
+        return node                                   #그리고 node를  반환한다.
 
     def __and__(self, other):
         node = EventNode()
@@ -741,7 +746,7 @@ class EventNode:
         return node
 
 
-Event = EventNode()
+Event = EventNode()          #우선 Eventnode 클래스의 객체 Event를 만들고, hetero_adversial에서 __call__함수를 호출한다.
 
 
 class AgentSymbol:
@@ -756,7 +761,7 @@ class AgentSymbol:
             int: a deterministic integer id
             str: can be 'all' or 'any', represents all or any agents in a group
         """
-        self.group = group if group is not None else -1
+        self.group = group if group is not None else -1  #group이 none이 아니라면, self.group=group을 하고, none이라면 -1을 넣어라.
         if index == "any":
             self.index = -1
         elif index == "all":
