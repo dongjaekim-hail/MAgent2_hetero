@@ -175,7 +175,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
     cfg.set({"embedding_size": 10})
 
 
-    options = {
+    options1 = {
         "width": 2,
         "length": 2,
         "hp": 1,
@@ -184,10 +184,34 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "attack_range": gw.CircleRange(2),
         "attack_penalty": tag_penalty,
     }
-    predator = cfg.register_agent_type("predator", options)
+
+    predator = [cfg.register_agent_type("predator_1", options1)]
                                     #self.agent_type_dict에 다음과 같이 predator의 option을 딕셔너리형태로 저장함.
                                     #{'predator': {'attack_penalty': -0.2, 'attack_range': circle(2), 'hp': 1,
                                     # 'length': 2, 'speed': 1, 'view_range': circle(5), 'width': 2}}
+    options2 = {
+        "width": 2,
+        "length": 2,
+        "hp": 1,
+        "speed": 1,
+        "view_range": gw.CircleRange(4),
+        "attack_range": gw.CircleRange(2),
+        "attack_penalty": tag_penalty,
+    }
+    predator.append(cfg.register_agent_type("predator_2", options2))
+
+    options3 = {
+        "width": 2,
+        "length": 2,
+        "hp": 1,
+        "speed": 1,
+        "view_range": gw.CircleRange(3),
+        "attack_range": gw.CircleRange(2),
+        "attack_penalty": tag_penalty,
+    }
+    predator.append(cfg.register_agent_type("predator_3", options3))
+
+
 
     options = {
         "width": 1,
@@ -203,18 +227,27 @@ def get_config(map_size, minimap_mode, tag_penalty):
     # 'prey':{'attack_range': circle(0), 'hp': 1, 'length': 1, 'speed': 1.5, 'view_range': circle(4), 'width': 1}}
 
 
-    predator_group = cfg.add_group(predator)         #cfg의 groups 리스트에 predator를 저장하고, 0을 반환한다. predator_group=0
+    predator_group = [cfg.add_group(predator[0])]       #cfg의 groups 리스트에 predator를 저장하고, 0을 반환한다. predator_group=0
+    predator_group.append(cfg.add_group(predator[1]))
+    predator_group.append(cfg.add_group(predator[2]))
+
+
     prey_group = cfg.add_group(prey)                 #cfg의 groups 리스트에 prey를 저장하고, 1을 반환한다. prey_group=1
 
 
                                                      #a = gw.AgentSymbol(0, index="any")을 넣는 것.
-    a = gw.AgentSymbol(predator_group, index="any")  #a=agent(0,-1)
-    b = gw.AgentSymbol(prey_group, index="any")      #b=agent(1,-1)   근데 이건 한번만 실행됨
+    a_0 = gw.AgentSymbol(predator_group[0], index="any")  #a_0=agent(0,-1)
+    a_1 = gw.AgentSymbol(predator_group[1], index="any")  #a_1=agent(1,-1)
+    a_2 = gw.AgentSymbol(predator_group[2], index="any")  #a_@=agent(2,-1)
+
+    b = gw.AgentSymbol(prey_group, index="any")      #b=agent(3,-1)   근데 이건 한번만 실행됨
 
 
 
                                #cfg.add_reward_rule(gw.Event(agent(0,-1), "attack", agent(1,-1)), receiver=[a, b], value=[1, -1])
-    cfg.add_reward_rule(gw.Event(a, "attack", b), receiver=[a, b], value=[1, -1])
+    cfg.add_reward_rule(gw.Event(a_0, "attack", b), receiver=[a_0, b], value=[1, -1])
+    cfg.add_reward_rule(gw.Event(a_1, "attack", b), receiver=[a_1, b], value=[1, -1])
+    cfg.add_reward_rule(gw.Event(a_2, "attack", b), receiver=[a_2, b], value=[1, -1])
                                 #gw.Event를 통해 gridworld에서 만든 Eventnode클래스의 객체인 Event 객체에 값을 주어 __call__을 호출한다.
                                 #__call__내부에는 node=Evnetnode()객체를 호출한다. 따라서 node객체에는
                                 # node = EventNode()
@@ -231,6 +264,11 @@ def get_config(map_size, minimap_mode, tag_penalty):
                                 #config클래스 안에 있는 함수임. self.reward_rules = [] 과 관련있음
                                 #[[<magent2.gridworld.EventNode object at 0x107745370>, [agent(0,-1), agent(1,-1)], [1, -1], False]]
                                 #이와 같이, reward.rules 라는 리스트에 다음과 같이 저장한다 gw.Event는 node를 반환하기에 저렇게 객체의 주소를 담는 것을 확인할 수 있다.
+                                #그래서 결국 reward_rules에는 다음과 같은 list가 생긴다.
+    # 수정한 결과 reward_rules에는 다음과 같은 list가 담긴다.
+    # [[<magent2.gridworld.EventNode object at 0x118352280>, [<magent2.gridworld.AgentSymbol object at 0x118352100>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False],
+    # [<magent2.gridworld.EventNode object at 0x1183522e0>, [<magent2.gridworld.AgentSymbol object at 0x118352160>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False],
+    # [<magent2.gridworld.EventNode object at 0x118352340>,[<magent2.gridworld.AgentSymbol object at 0x1183521c0>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False]]
     return cfg
 
                                 #return _parallel_env(
@@ -281,7 +319,7 @@ class _parallel_env(magent_parallel_env, EzPickle):
             np.minimum(reward_vals, 0).sum(),
             np.maximum(reward_vals, 0).sum(),
         ]
-        names = ["predator", "prey"]
+        names = ["predator_0","predator_1","predator_2","predator_3" ,"prey"]
                              #중요한 건 이 파트구나.
         super().__init__(    #magent_parallel_env 클래스의 __init__을 실행하는 것!
             env,                #env = magent2.GridWorld(get_config(map_size, minimap_mode, **reward_args), map_size=map_size)
@@ -297,8 +335,10 @@ class _parallel_env(magent_parallel_env, EzPickle):
 
     def generate_map(self):
         env, map_size = self.env, self.map_size
-        handles = env.get_handles()
+        handles = env.get_handles()  #[c_int(0), c_int(1), c_int(2), c_int(3)]
 
         env.add_walls(method="random", n=map_size * map_size * 0.015)
         env.add_agents(handles[0], method="random", n=map_size * map_size * 0.00625)
-        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.0125)
+        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.00625)
+        env.add_agents(handles[2], method="random", n=map_size * map_size * 0.00625)
+        env.add_agents(handles[3], method="random", n=map_size * map_size * 0.0125)

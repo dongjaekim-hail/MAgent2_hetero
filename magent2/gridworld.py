@@ -54,7 +54,7 @@ class GridWorld(Environment):
             "render_dir": str,
         }
 
-        for key in config.config_dict:
+        for key in config.config_dict:              #앞에서도 보았듯이 config_dict은 건드린게 없으니까 건드릴 필요 없을 듯. 이는 단지 c으로 바꿔서 라이브러리에 적용하기 위한 것
             value_type = config_value_type[key]
             if value_type is int:
                 _LIB.env_config_game(
@@ -81,7 +81,7 @@ class GridWorld(Environment):
                     ctypes.c_char_p(config.config_dict[key]),
                 )
 
-        # register agent types
+        # register agent types                  #문제는 여긴데...
         for name in config.agent_type_dict:     #name={predator, prey}
             type_args = config.agent_type_dict[name] #그런데 여기서 왜 prey의 것만 type_args에 넣는거야? 아님! 틀렸음!! X
                                                      #그게 아니라,,, for문이잖아! 먼저 predator의 option을 가지고 밑의 코드를 돌린 다음에
@@ -591,7 +591,11 @@ class GridWorld(Environment):
                         symbol2int[item] = config.symbol_ct
                         config.symbol_ct += 1
 
-        for rule in config.reward_rules:
+        # 수정한 결과 reward_rules에는 다음과 같은 list가 담긴다.
+        # [[<magent2.gridworld.EventNode object at 0x118352280>, [<magent2.gridworld.AgentSymbol object at 0x118352100>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False],
+        # [<magent2.gridworld.EventNode object at 0x1183522e0>, [<magent2.gridworld.AgentSymbol object at 0x118352160>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False],
+        # [<magent2.gridworld.EventNode object at 0x118352340>,[<magent2.gridworld.AgentSymbol object at 0x1183521c0>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False]]
+        for rule in config.reward_rules:              #config에 담긴 reward_rules 을 가져옴
             on = rule[0]
             receiver = rule[1]
             for symbol in receiver:

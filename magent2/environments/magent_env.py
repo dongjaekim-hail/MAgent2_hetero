@@ -36,13 +36,13 @@ class magent_parallel_env(ParallelEnv):
         self.extra_features = extra_features
         self.env = env                              #그리고 env는 다 같은 env이다. 자식클래스인 _parallel_env(in hetero_adversial)에서
                                                     #모두 같은 env인 것. 즉 env의 주소를 계속 넘겨받고 있다는 것이다.
-        self.handles = active_handles               ##[c_int(0), c_int(1)]
-        self._all_handles = self.env.get_handles()  #[c_int(0), c_int(1)] config로부터 온 것 같은데...
+        self.handles = active_handles               ##[c_int(0), c_int(1), c_int(2), c_int(3)]
+        self._all_handles = self.env.get_handles()  #[c_int(0), c_int(1), c_int(2), c_int(3)] config로부터 온 것 같은데...
         env.reset()
         self.generate_map()                         #희한하네....이게 돌아가? 되나보네 신기하네, 앞서서 이미 _parallel_env가 작동하기 때문에
                                                     #그 안에서 이미 generate_map() 매서드가 작동하기 때문에 돌아가는게 가능한 것 같다.
         self.team_sizes = [
-            env.get_num(handle) for handle in self.handles #handle에 [c_int(0), c_int(1)]가 하나씩 들어가면서 숫자를 가져온다.
+            env.get_num(handle) for handle in self.handles #handle에 [c_int(0), c_int(1), c_int(2), c_int(3)]가 하나씩 들어가면서 숫자를 가져온다.
         ]  # gets updated as agents die
         self.agents = [
             f"{names[j]}_{i}"
