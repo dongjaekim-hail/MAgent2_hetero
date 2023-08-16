@@ -14,7 +14,7 @@ class GridWorld(Environment):
     OBS_INDEX_VIEW = 0
     OBS_INDEX_HP = 1
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, config, **kwargs):   #kwargs={'map_size': 45}
         """
         Parameters
         ----------
@@ -24,6 +24,7 @@ class GridWorld(Environment):
                 kwargs are the arguments to the config
             if config is a Config Object, then parameters are stored in that object
         """
+
         Environment.__init__(self)
 
         # if is str, load built in configuration
@@ -81,15 +82,17 @@ class GridWorld(Environment):
                 )
 
         # register agent types
-        for name in config.agent_type_dict:
-            type_args = config.agent_type_dict[name]
+        for name in config.agent_type_dict:     #name={predator, prey}
+            type_args = config.agent_type_dict[name] #그런데 여기서 왜 prey의 것만 type_args에 넣는거야? 아님! 틀렸음!! X
+                                                     #그게 아니라,,, for문이잖아! 먼저 predator의 option을 가지고 밑의 코드를 돌린 다음에
+                                                     #다시 prey꺼를 받아서 하겠지!
 
             # special pre-process for view range and attack range
             for key in [x for x in type_args.keys()]:
                 if key == "view_range":
-                    val = type_args[key]
+                    val = type_args[key]       #'view_range': circle(5) 이거 클래스라서 radius랑 angle은 그 클래스 안에 선언된 변수임
                     del type_args[key]
-                    type_args["view_radius"] = val.radius
+                    type_args["view_radius"] = val.radius  #그래서 . 을 이용할 수 있는 것임
                     type_args["view_angle"] = val.angle
                 elif key == "attack_range":
                     val = type_args[key]
@@ -106,6 +109,8 @@ class GridWorld(Environment):
             _LIB.gridworld_register_agent_type(
                 self.game, name.encode("ascii"), length, keys, values
             )
+        #결국 keys 변수는 type_args의 키들을 ASCII 문자열로 인코딩한 후 C 스타일 문자열 포인터 배열로 만든 것을 나타낸다. 이러한 처리는 C 라이브러리와 상호작용할 때
+        # 인자나 데이터를 올바른 형태로 전달하기 위해 필요한 단계. 코드 전체 구현을 보면 어떤 라이브러리와의 상호작용을 위한 준비 단계인 것으로 보인다.
 
         # serialize event expression, send to C++ engine
         self._serialize_event_exp(config)

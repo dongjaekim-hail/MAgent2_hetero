@@ -1,0 +1,1 @@
+{'attack_penalty': -0.2, 'attack_range': circle(2), 'hp': 1, 'length': 2, 'speed': 1, 'view_range': circle(5), 'width': 2}

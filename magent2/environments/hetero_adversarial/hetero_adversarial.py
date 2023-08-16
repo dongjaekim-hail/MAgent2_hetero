@@ -174,6 +174,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
     cfg.set({"minimap_mode": minimap_mode})
     cfg.set({"embedding_size": 10})
 
+
     options = {
         "width": 2,
         "length": 2,
@@ -193,10 +194,14 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "length": 1,
         "hp": 1,
         "speed": 1.5,
-        "view_range": gw.CircleRange(4),
+        "view_range": gw.CircleRange(4),    #아 이거 객체구나
         "attack_range": gw.CircleRange(0),
     }
     prey = cfg.register_agent_type("prey", options)
+    #결국,,,,agent_type_dict에 다음과 같이 저장이 된다.
+    #{'predator': {'attack_penalty': -0.2, 'attack_range': circle(2), 'hp': 1,'length': 2, 'speed': 1, 'view_range': circle(5), 'width': 2},
+    # 'prey':{'attack_range': circle(0), 'hp': 1, 'length': 1, 'speed': 1.5, 'view_range': circle(4), 'width': 1}}
+
 
     predator_group = cfg.add_group(predator)         #cfg의 groups 리스트에 predator를 저장하고, 0을 반환한다. predator_group=0
     prey_group = cfg.add_group(prey)                 #cfg의 groups 리스트에 prey를 저장하고, 1을 반환한다. prey_group=1
@@ -264,6 +269,8 @@ class _parallel_env(magent_parallel_env, EzPickle):
         env = magent2.GridWorld(
             get_config(map_size, minimap_mode, **reward_args), map_size=map_size
         )
+        #get_config의 결과로 gridworld.Config  클래스의 인스턴스를 반환한다. 이 인스턴스의 agent_type_dict인자에 range_view가 들어간다.
+        #따라서, GridWorld 안에서 agent_type_dict안에 있는 range_view가 어떻게 돌아다니는지 살펴보아야 한다.
         #class GridWorld
         #def __init__(self, config, **kwargs): magent2.GridWorld의 인자이다. config이외의 키워드 인자는 딕셔너리로 흡수한다.
 
@@ -292,6 +299,6 @@ class _parallel_env(magent_parallel_env, EzPickle):
         env, map_size = self.env, self.map_size
         handles = env.get_handles()
 
-        env.add_walls(method="random", n=map_size * map_size * 0.03)
-        env.add_agents(handles[0], method="random", n=map_size * map_size * 0.0125)
-        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.025)
+        env.add_walls(method="random", n=map_size * map_size * 0.015)
+        env.add_agents(handles[0], method="random", n=map_size * map_size * 0.00625)
+        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.0125)
