@@ -716,7 +716,11 @@ class EventNode:
             node.inputs = [subject, x1, y1, x2, y2]
         elif predicate == "attack":
             node.op = EventNode.OP_ATTACK              #node.op=7
-            node.inputs = [subject, args[0]]           #node.inputs=["attack",agent(1,-1)]
+            node.inputs = [subject, args[0]]
+            print(subject)
+            print(args[0])
+            print(node.inputs)
+            #node.inputs=["attack",agent(1,-1)]
         elif predicate == "kill":
             node.op = EventNode.OP_KILL
             node.inputs = [subject, args[0]]

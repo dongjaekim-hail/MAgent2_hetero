@@ -67,4 +67,8 @@ minimap_mode 사용되는 쪽으로 가보니까 magent_env 파일에 86라인 �
 
 walls = self.env._get_walls_info() 이 부분에서 wall들의 위치를 알 수 있는 것 같은데..(근데 이놈들의 좌표는 필요가 없을 것 같긴 하다 아마도 feature들에 다 있지 않을까 싶다) magent_env파일에 있\
 
+ if len(self.handles) == 3:
+            vs = " vs ", (0, 0, 0)
+            result = [(form_txt(0), vs, form_txt(1))]
+render에 get banner함수에서 집단이 3개일때는 정의가 안되어 잇는데...이거 고치면...되는 건가
 """

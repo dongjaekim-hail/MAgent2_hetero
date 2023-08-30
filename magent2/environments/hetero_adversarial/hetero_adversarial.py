@@ -200,7 +200,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "hp": 1,
         "speed": 1,
         "view_range": gw.CircleRange(5),
-        "attack_range": gw.CircleRange(2),
+        "attack_range": gw.CircleRange(20),
         "attack_penalty": tag_penalty,
     }
 
@@ -214,7 +214,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "hp": 1,
         "speed": 1,
         "view_range": gw.CircleRange(4),
-        "attack_range": gw.CircleRange(2),
+        "attack_range": gw.CircleRange(20),
         "attack_penalty": tag_penalty,
     }
     predator.append(cfg.register_agent_type("predator_2", options2))
@@ -225,7 +225,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "hp": 1,
         "speed": 1,
         "view_range": gw.CircleRange(3),
-        "attack_range": gw.CircleRange(2),
+        "attack_range": gw.CircleRange(20),
         "attack_penalty": tag_penalty,
     }
     predator.append(cfg.register_agent_type("predator_3", options3))
@@ -251,7 +251,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
     predator_group.append(cfg.add_group(predator[2]))
 
 
-    prey_group = cfg.add_group(prey)                 #cfg의 groups 리스트에 prey를 저장하고, 1을 반환한다. prey_group=1
+    prey_group = cfg.add_group(prey)             #cfg의 groups 리스트에 prey를 저장하고, 1을 반환한다. prey_group=1
 
 
                                                      #a = gw.AgentSymbol(0, index="any")을 넣는 것.
@@ -338,7 +338,7 @@ class _parallel_env(magent_parallel_env, EzPickle):
             np.minimum(reward_vals, 0).sum(),
             np.maximum(reward_vals, 0).sum(),
         ]
-        names = ["predator_0","predator_1","predator_2" ,"prey"]
+        names = ["predator_1","predator_2","predator_3","prey"]
                              #중요한 건 이 파트구나.
         super().__init__(    #magent_parallel_env 클래스의 __init__을 실행하는 것!
             env,                #env = magent2.GridWorld(get_config(map_size, minimap_mode, **reward_args), map_size=map_size)
