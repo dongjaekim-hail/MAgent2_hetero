@@ -873,6 +873,7 @@ class Config:
         if len(receiver) != len(value):
             raise Exception("the length of receiver and value should be equal")
         self.reward_rules.append([on, receiver, value, terminal])
+        print(self.reward_rules)
 
 
 class CircleRange:

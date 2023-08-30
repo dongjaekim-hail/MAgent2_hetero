@@ -154,6 +154,25 @@ def raw_env(
 
 
 env = make_env(raw_env)
+#결국 이것도 함수를 만드는 거였음 1. raw_env 라는 함수가 make_env라는 함수의 인자로 들어감 2. make_evn함수에서는 raw_env함수를 어떻게 사용할지 알아야함
+# def make_env(raw_env):
+#     def env_fn(**kwargs):
+#         env = raw_env(**kwargs) #결과값 클래스 class parallel_to_aec_wrapper(AECEnv)의 인스턴스임
+#         env = wrappers.AssertOutOfBoundsWrapper(env) #그 인스턴스로 뭔가 형 변환을 해서 호환을 맞춰 주는 것인데 이것까지 자세히 알 필요는 없다.
+#         env = wrappers.OrderEnforcingWrapper(env)
+#         return env
+#
+#     return env_fn
+
+#return env_fn 인것으로 보아서 make_env함수는 다시 raw_env함수 객체를 return 한다.
+#make_env함수는 인자로 받은 raw_env함수는 무엇을 할까? **kwargs를 이용한다.
+#결국 env = make_env(raw_env) 여기로 들어가서 만들어지는 함수에 어떤 인자 K를 넣으면 그것은 env_fn함수에 k 즉, **kwargs으로 들어가 실행된다.
+#결국...
+# return parallel_to_aec_wrapper(
+#         parallel_env(map_size, max_cycles, minimap_mode, extra_features, **reward_args))
+#이것을 실행하는 것이다. 그리고 env_fn함수안에 wrappers.AssertOutOfBoundsWrappe,wrappers.OrderEnforcingWrapper 이 함수는 그냥 뭔가 호한을 위한 함수인것 같다..알 필요는 굳이...
+# 다만 raw_env(**kwargs)함수는 중요한 것 같다. 그래서  결국 parallel_to_aec_wrapper 이 함수가 중요하다는 것이고, 이 함수를 확인해야 한다.
+#그런데 마침 test파일에 observation을 만드는 함수가 env.last()인데, 이 last함수가 class parallel_to_aec_wrapper(AECEnv) 이 클래스 안에 있다. 좀 더 자세히 말하자면 AECEnv에 있다.
 
 # get_config(map_size, minimap_mode, **reward_args)이고, reward_args에는
 # {’tag_penalty’ : -0.2}가 넘어간다.
@@ -238,7 +257,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
                                                      #a = gw.AgentSymbol(0, index="any")을 넣는 것.
     a_0 = gw.AgentSymbol(predator_group[0], index="any")  #a_0=agent(0,-1)
     a_1 = gw.AgentSymbol(predator_group[1], index="any")  #a_1=agent(1,-1)
-    a_2 = gw.AgentSymbol(predator_group[2], index="any")  #a_@=agent(2,-1)
+    a_2 = gw.AgentSymbol(predator_group[2], index="any")  #a_2=agent(2,-1)
 
     b = gw.AgentSymbol(prey_group, index="any")      #b=agent(3,-1)   근데 이건 한번만 실행됨
 
@@ -248,7 +267,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
     cfg.add_reward_rule(gw.Event(a_0, "attack", b), receiver=[a_0, b], value=[1, -1])
     cfg.add_reward_rule(gw.Event(a_1, "attack", b), receiver=[a_1, b], value=[1, -1])
     cfg.add_reward_rule(gw.Event(a_2, "attack", b), receiver=[a_2, b], value=[1, -1])
-                                #gw.Event를 통해 gridworld에서 만든 Eventnode클래스의 객체인 Event 객체에 값을 주어 __call__을 호출한다.
+                                # gw.Event를 통해 gridworld에서 만든 Eventnode클래스의 객체인 Event 객체에 값을 주어 __call__을 호출한다.
                                 #__call__내부에는 node=Evnetnode()객체를 호출한다. 따라서 node객체에는
                                 # node = EventNode()
                                 # node.op = EventNode.OP_NOT     #node.op=7
@@ -277,7 +296,7 @@ class _parallel_env(magent_parallel_env, EzPickle):
     metadata = {
         "render_modes": ["human", "rgb_array"],
         "name": "hetero_adversarial_v1",
-        "render_fps": 10,
+        "render_fps": 40,
     }
 
     # default_map_size = 45,,
@@ -319,7 +338,7 @@ class _parallel_env(magent_parallel_env, EzPickle):
             np.minimum(reward_vals, 0).sum(),
             np.maximum(reward_vals, 0).sum(),
         ]
-        names = ["predator_0","predator_1","predator_2","predator_3" ,"prey"]
+        names = ["predator_0","predator_1","predator_2" ,"prey"]
                              #중요한 건 이 파트구나.
         super().__init__(    #magent_parallel_env 클래스의 __init__을 실행하는 것!
             env,                #env = magent2.GridWorld(get_config(map_size, minimap_mode, **reward_args), map_size=map_size)
@@ -337,8 +356,9 @@ class _parallel_env(magent_parallel_env, EzPickle):
         env, map_size = self.env, self.map_size
         handles = env.get_handles()  #[c_int(0), c_int(1), c_int(2), c_int(3)]
 
-        env.add_walls(method="random", n=map_size * map_size * 0.015)
-        env.add_agents(handles[0], method="random", n=map_size * map_size * 0.00625)
-        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.00625)
-        env.add_agents(handles[2], method="random", n=map_size * map_size * 0.00625)
-        env.add_agents(handles[3], method="random", n=map_size * map_size * 0.0125)
+        #env.add_walls(method="random", n=map_size * map_size * 0.015)
+        env.add_walls(method="random", n=0)
+        env.add_agents(handles[0], method="random", n=map_size * map_size * 0.005) #12.6->12개
+        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.005)
+        env.add_agents(handles[2], method="random", n=map_size * map_size * 0.005)
+        env.add_agents(handles[3], method="random", n=map_size * map_size * 0.005)  #25.3 ->25개
