@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun1.py" beforeDir="false" afterPath="$PROJECT_DIR$/jun1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jun2.py" beforeDir="false" afterPath="$PROJECT_DIR$/jun2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" beforeDir="false" afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -185,16 +183,6 @@
           <url>file://$PROJECT_DIR$/magent2/environments/adversarial_pursuit/adversarial_pursuit.py</url>
           <line>134</line>
           <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>10</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>20</line>
-          <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/magent2/environments/magent_env.py</url>

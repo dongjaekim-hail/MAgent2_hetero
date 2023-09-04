@@ -71,4 +71,6 @@ walls = self.env._get_walls_info() 이 부분에서 wall들의 위치를 알 수
             vs = " vs ", (0, 0, 0)
             result = [(form_txt(0), vs, form_txt(1))]
 render에 get banner함수에서 집단이 3개일때는 정의가 안되어 잇는데...이거 고치면...되는 건가
+
+def _compute_terminates(self, step_done): 이건?
 """
