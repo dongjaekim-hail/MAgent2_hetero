@@ -246,6 +246,8 @@ class magent_parallel_env(ParallelEnv):
                 :, view.shape[1] // 2, view.shape[2] // 2, 2
             ]
 
+            return pos
+
             if self.extra_features:
                 add_zeros = np.zeros(
                     (
@@ -267,7 +269,9 @@ class magent_parallel_env(ParallelEnv):
                 state_features = np.hstack((actions, rewards))
 
                 state[pos_x, pos_y, 1 + len(self.team_sizes) * 2 :] = state_features
-        return state
+
+        #return pos
+        #return state
 
     def step(self, all_actions):
         action_list = [-1] * len(self.agents)

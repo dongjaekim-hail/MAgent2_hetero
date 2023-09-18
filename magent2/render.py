@@ -141,7 +141,7 @@ class Renderer:
         elif len(self.handles) == 3:
             vs = " vs ", (0, 0, 0)
             comma = ", ", (0, 0, 0)
-            result = [(form_txt(0), comma, form_txt(1)), vs, form_txt(2)]
+            result = [(form_txt(0), comma, form_txt(1), vs, form_txt(2))]
         elif len(self.handles) == 4:
             vs = " vs ", (0, 0, 0)
             comma = ", ", (0, 0, 0)
@@ -331,6 +331,7 @@ class Renderer:
         observation = pygame.surfarray.pixels3d(self.display)
         new_observation = np.copy(observation)
         del observation
+
         if self.mode == "human":
             pygame.display.flip()
         return (
