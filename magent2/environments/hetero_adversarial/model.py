@@ -1,34 +1,63 @@
-# these codes modified from https://github.com/marload/DeepRL-TensorFlow2
-# import wandb # this one, you need to do some stuff. wandb login.
-import gymnasium as gym
-import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Conv2D, Flatten
-from tensorflow.keras.optimizers import Adam
-
-import gym
-import argparse
+import torch as th
+import torch.nn as nn
+import torch.nn.functional as F
+from torch_geometric.nn import DenseSAGEConv
 import numpy as np
-from collections import deque
-import random
+import torch.optim as optim
 
-import dgl
-from dgl.nn import DenseSAGEConv
+#sharedGNN은 전체 에이전트 클래스 들어갈 클래스의 앞부분에 넣으면 될 듯. 그 클래스를 total 이라고 하자.
+#total 안에 action select 하는 부분 넣고, DQN 업데이트 하는 부분도 있어야 할 듯! state 가 들어가서 쭉쭉 들어가서 마지막에 loss 하나만 나오는 거라서 네트워크를 하나로 묶어야 할 것 같고, 이 모델안에 action 선택하는거 있어야 겠는데
+#train 하는 것도 있어야함
+class G_DQN(nn.Module):
+    def __init__(self,  dim_act, observation_state):
+        super(G_DQN, self).__init__()
+        self.eps_decay = args.epe_decay #이걸 어디에 해야하나..
 
-tf.keras.backend.set_floatx('float64')
-# wandb.init(name='DQN', project="deep-rl-tf2")
+        self.observation_state= observation_state
+        self.dim_act = dim_act
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--gamma', type=float, default=0.95)
-parser.add_argument('--lr', type=float, default=0.005)
-parser.add_argument('--batch_size', type=int, default=32)
-parser.add_argument('--eps', type=float, default=1.0)
-parser.add_argument('--eps_decay', type=float, default=0.995)
-parser.add_argument('--eps_min', type=float, default=0.01)
+        #GRAPH
+        self.dim_feature = observation_state[2]
+        self.gnn1 = DenseSAGEConv(self.dim_feature, 128)
+        self.gnn2 = DenseSAGEConv(128, self.dim_feature*2) #feature 의 2배를 출력
+        self.sig = nn.Sigmoid() #sigmoid 도 이렇게 해야 하고..
 
-args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
+        #DQN
+        self.dim_input = observation_state[0] * observation_state[1] * observation_state[2]*2 #concat 해서 2배!
+        self.FC1 = nn.Linear(self.dim_input, 128)
+        self.FC2 = nn.Linear(128, dim_act)
+        self.relu = nn.ReLU(inplace=True)
+
+        self.criterion = nn.MSELoss()
+        self.optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.l2)
+
+    # shared_graph는 MADQN class 위에 선언될 shared graph 인스턴스를 객체로 받아, 그 객체에 정보를 저장하고, 그것으로부터 정보를 가져오도록 구성한다.
+    def forward(self, state, adj, mask = None, from_guestbook): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고
+        x = state.reshape(-1, self.dim_feature) #(8*8*7)를 (64*7)으로 변경하여 그래프의 featur metrix으로 바꾸어주는 역활!
+        x = self.gnn1(x, adj, mask) #노드끼리 fully connective 되어 있다는 가정아래!
+        x = self.gnn2(x, adj, mask) #원래는 self.gnn2(x, adj)으로 mask 된 부분이 없었긴 했는데,, 왜 여긴 mask가 없지?
+        x = F.elu(x)  # exponential linear unit
+        x = x.squeeze()
+
+        dqn = x[:, :self.dim_feature]  # (9*7)
+        shared = self.sig(x[:, self.dim_feature:]) #(9*7)꼴
+        shared = dqn * shared # sigmoid 해준 값을 방명록에 남겨주어야 함 #(9*7)꼴
+        shared = shared.reshape(self.observation_state) #다시 3*3*7 꼴로 만들어주어야 함-> 이를 shared graph 에 넘겨주어야 한다.
+
+        #shared_graph 으로부터 정보를 가져와서 나의 정보와 concat 해야 한다.  8*8*7 과 8*8*7 을 concat 해야 한다.
+        input = np.concatenate((shared, from_guestbook), axis=0) #16*8*7 일 거고
+
+        x = state.reshape(-1, self.dim_input) #쭉 펴주고
+        x = self.FC1(x)
+        x = self.FC2(x)
+
+        #print(type(dqn)) #torch.tensor
+        return x, shared #shared_graph에 넣는건 밖에서 진행하자.
 
 
-class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초에 history를 저장해서 그로부터 하나씩 가져와서 학습을 진행시킨다.
+    #업데이트 하는 부분이랑, 옵티마시져랑 loss 를 기록해 놓아야 할 거 같은데
+
+class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초에 history를 저장해서 그로부터 하나씩 가져와서 학습을 진행시킨다. 수정필요!
    def __init__(self, capacity=10000):
       self.buffer = deque(maxlen=capacity)    #deque의 알고리즘을 가지는 객체 생성
                                     #append를 통해 가장 오른쪽에 데이터를 추가하고 appendleft를 통해 왼쪽에 추가한다.
@@ -39,115 +68,10 @@ class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초
 
    def sample(self):
       sample = random.sample(self.buffer, args.batch_size)   #batch size만큼 buffer에서 가져온다.
-      states, actions, rewards, next_states, done = map(np.asarray, zip(*sample))
-      states = np.array(states).reshape(args.batch_size, -1)
+      states, actions, rewards, next_states, done = map(np.asarray, zip(*sample)) #map 은 넘파이 형태로 변형시키는 것이고, zip은 리스트를 풀어서 각 데이터 유형에 대한 리스트를 얻는다.
+      states = np.array(states).reshape(batch_size, -1)
       next_states = np.array(next_states).reshape(args.batch_size, -1)
       return states, actions, rewards, next_states, done     #buffer에서 데이터 받아서 반환하는 과정을 거침
 
    def size(self):
       return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것(?)
-
-class SharedGnn:
-   def  __init__(self,input_dim,out_dim):
-      self.shared=DenseSAGEConv(input_dim,out_dim)
-
-
-
-class ActionStateModel:
-   def __init__(self, state_dim, aciton_dim):
-      self.state_dim = state_dim
-      self.action_dim = aciton_dim
-      self.epsilon = args.eps     #args라는 전역변수같은 녀석에 eps가 들어있나봄->맞음
-
-      self.model = self.create_model()
-
-   def create_model(self):   #input에는 state_dim  output에는 action_dim 뱉음 중간 충은 노드100개, 각 노드에 렐루닮
-      model = tf.keras.Sequential([
-         Input((self.state_dim,)),
-         Dense(100, activation='relu'),
-         Dense(self.action_dim)
-      ])
-      model.compile(loss='mse', optimizer=Adam(args.lr))  #loss를 mse로 하는 이유는 목적함수가 mse의 형태이기 때문이다.
-      return model
-
-   def predict(self, state):   #state라는 인자를 넘겨주면, 앞에서 정의한 model에 predict 함수를 정의해서 결과를 뽑아내는 함수이다.
-      return self.model.predict(state)
-
-   def get_action(self, state):
-      state = np.reshape(state, [1, self.state_dim])
-      self.epsilon *= args.eps_decay
-      self.epsilon = max(self.epsilon, args.eps_min)
-      q_value = self.predict(state)[0]
-      if np.random.random() < self.epsilon:
-         return random.randint(0, self.action_dim - 1)
-      return np.argmax(q_value)
-
-   def train(self, states, targets):
-      self.model.fit(states, targets, epochs=1, verbose=0)
-
-
-
-class Agent:
-   def __init__(self, env):
-      self.env = env
-      self.action_dim = act_dim 넣고
-      self.
-      #gnn attention weight-> observation을 받고, 그 observation state 들의 값을 각각 얼만큼의 비중으로 가져올 것인지 (유사 attention)
-      #gaw 에는 에이전트 본인만의 weight만 넣는다.
-      self.gaw=
-      #각 에이전트들의 gnn네트워크 -> 주변 에이전트들로부터 정보를 취합하는 과정을 나타낸다.
-      self.state_dim = np.prod(gnn거쳐서 나온 출력값)
-
-
-      self.model = ActionStateModel(self.state_dim, self.action_dim)
-      self.target_model = ActionStateModel(self.state_dim, self.action_dim)
-
-
-
-      self.buffer = ReplayBuffer()   #ReplayBuffer객체 형성
-
-   def target_update(self):
-      weights = self.model.model.get_weights()       #behavior network에서 weight들을 가져오고
-      self.target_model.model.set_weights(weights)   #target model network의 weight들에 그대로 복사하는 과정
-
-   def replay(self):
-      for _ in range(10):
-         states, actions, rewards, next_states, done = self.buffer.sample()  #위의 생성한 buffer에서 하나의 sample을 뽑음
-         targets = self.target_model.predict(states)   #target network으로부터 target을 만들어야 하므로
-         next_q_values = self.target_model.predict(next_states).max(axis=1) #next state에 대해서도 q value을 예측
-         targets[range(args.batch_size), actions] = rewards + (1 - done) * next_q_values * args.gamma
-         self.model.train(states, targets)  #그렇게 targets 에 대한 y value을 구해서 그에 대해서 train을 진행시킴
-
-   def train(self, max_episodes=1000, render_episodes=100):
-      for ep in range(max_episodes):
-         done, total_reward = False, 0
-         state, _ = self.env.reset()
-         while not done:   #한 에피소드에서 매 step 별로 진행한다는 말
-            action = self.model.get_action(state)
-            next_state, reward, done, _, _ = self.env.step(action)
-            self.buffer.put(state, action, reward * 0.01, next_state, done)
-            total_reward += reward
-            state = next_state							#에피소드 끝날때까지 버퍼에 경험들을 모으는 과정
-         if self.buffer.size() >= args.batch_size:		#다 모으고 나서...
-            self.replay()
-         self.target_update()
-         print('EP{} EpisodeReward={}'.format(ep, total_reward))
-         # wandb.log({'Reward': total_reward})
-         if (ep+1) % render_episodes == 0:
-            state, _ = self.env.reset()
-            while not done:
-               self.env.render()
-               action = self.model.get_action(state)
-               next_state, reward, done, _, _  = self.env.step(action)
-
-
-
-def main():
-   env = gym.make("Pong-v4", render_mode='human')
-   agent = Agent(env)                          #Agent의 init: __init__(self, env) ->env를 받아야함
-   agent.train(max_episodes=1000, render_episodes = 100)
-
-
-if __name__ == "__main__":
-   main()
-

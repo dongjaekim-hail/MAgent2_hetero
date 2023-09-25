@@ -14,10 +14,13 @@ for ep in range(1000):
 	print("ep:",ep)
 
 	for agent in env.agent_iter():
-		# handles = env.env.env.env.env.get_handles()
-		# predator1 = env.env.env.env.env.get_pos(handles[0])
-		# predator2 = env.env.env.env.env.get_pos(handles[1])
-		# prey1 = env.env.env.env.env.get_pos(handles[2])
+		handles = env.env.env.env.env.get_handles()
+		pos_predator1 = env.env.env.env.env.get_pos(handles[0])
+		pos_predator2 = env.env.env.env.env.get_pos(handles[1])
+		#prey1 = env.env.env.env.env.get_pos(handles[2])
+
+		print(pos_predator1)
+		print(pos_predator2)
 
 
 		observation, reward, termination, truncation, info = env.last()
