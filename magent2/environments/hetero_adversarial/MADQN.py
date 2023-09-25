@@ -11,11 +11,6 @@ import tensorflow as tf
 import argparse
 
 
-
-
-tf.keras.backend.set_floatx('float64')
-# wandb.init(name='DQN', project="deep-rl-tf2")
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--gamma', type=float, default=0.95)
 parser.add_argument('--lr', type=float, default=0.005)
@@ -71,6 +66,28 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             weights = self.gdqns[i].get_weights()  # behavior network에서 weight들을 가져오고
             self.gdqns_target[i].set_weights(weights)  # target model network의 weight들에 그대로 복사하는 과정
 
+
+    def from_guestbook(self, shared, pos, range, entire_state): #에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
+        x_start = pos[0]
+        y_start = pos[1]
+
+        x_size = range
+        y_size = range
+        z_size = entire_state[2]
+
+        extracted_area = shared[x_start:x_start + x_size, y_start:y_start + y_size, z_start:z_start + z_size] #pos의 값을 정 중앙의 값이므로 수정할 필요 있음
+        return extraced_area #(8*8*7)으로 출력
+    def to_guestbook(self,  shared, pos, range, entire_state, info):
+        # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
+        x_start = pos[0]
+        y_start = pos[1]
+
+        x_size = range
+        y_size = range
+        z_size = entire_state[2]
+
+        shared[x_start:x_start + x_size, y_start:y_start + y_size, z_start:z_start + z_size] += info
+
     def get_action(self, state, adj, mask = None, from_guestbook, gdqns):
         q_value, shared = gdqns(self, state, adj, mask=None, from_guestbook)[0]
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
@@ -78,14 +95,14 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
           # predict에는 state에 따른 각 action의 값들이 나올건데, 그 값들을 저장하는 것
         if np.random.random() < self.epsilon:  # 0부터 1까지 랜덤한 숫자를 생성하고, 그 수가 입실론보다 작으면 action을 랜덤으로 뽑는다.
             return random.randint(0, self.dim_act - 1)  # 그래서 0부터 action_dim-1 까지의 정수중에서 랜덤으로 하나 뽑는 거다.
-        return np.argmax(q_value)  # 만약 그게 아니라면, q_value즉 가장 크게 하는 인덱스의 값을 추출한다.
+        return np.argmax(q_value)  # 만약 그게 아니라면, q_value 증 가장 크게 하는 인덱스의 값을 추출한다.
 
 
-    def replay(self,buffer, gdqn_target, gdqn_optimizer):
+    def replay(self, buffer, gdqn_target, gdqn_optimizer):
         for _ in range(10):
             states, actions, rewards, next_states, done = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
-            targets = gdqn_target(state, adj, mask = None, from_guestbook)  # target network으로부터 target을 만들어야 하므로
-            next_q_values = gdqn_target(next_states,adj, mask = None, from_guestbook).max(axis=1)  # next state에 대해서도 q value을 예측
+            targets, _ = gdqn_target(state, adj, mask = None, from_guestbook)  # target network으로부터 target을 만들어야 하므로
+            next_q_values, _ = gdqn_target(next_states, adj, mask = None, from_guestbook).max(axis=1)  # next state에 대해서도 q value을 예측
             targets[range(args.batch_size), actions] = rewards + (1 - done) * next_q_values * args.gamma
             loss = self.criterion(states, targets)
             loss.backward
