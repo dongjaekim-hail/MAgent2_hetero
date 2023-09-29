@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import DenseSAGEConv
 import numpy as np
 import torch.optim as optim
+from arguments import args
 
 #sharedGNN은 전체 에이전트 클래스 들어갈 클래스의 앞부분에 넣으면 될 듯. 그 클래스를 total 이라고 하자.
 #total 안에 action select 하는 부분 넣고, DQN 업데이트 하는 부분도 있어야 할 듯! state 가 들어가서 쭉쭉 들어가서 마지막에 loss 하나만 나오는 거라서 네트워크를 하나로 묶어야 할 것 같고, 이 모델안에 action 선택하는거 있어야 겠는데
@@ -29,7 +30,7 @@ class G_DQN(nn.Module):
         self.relu = nn.ReLU(inplace=True)
 
         self.criterion = nn.MSELoss()
-        self.optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.l2)
+        #self.optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.l2)
 
     # shared_graph는 MADQN class 위에 선언될 shared graph 인스턴스를 객체로 받아, 그 객체에 정보를 저장하고, 그것으로부터 정보를 가져오도록 구성한다.
     def forward(self, state, adj, mask = None, from_guestbook): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고

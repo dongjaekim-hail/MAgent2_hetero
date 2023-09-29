@@ -72,22 +72,35 @@ import numpy as np
 #
 #45x45x7 크기의 3차원 배열을 가정합니다.
 #이 배열은 예시이므로 실제 데이터를 사용하십시오.
-state = np.random.randint(0, 50, size=(5, 5, 1), dtype=np.uint8)
-# 위 코드는 0부터 255 사이의 무작위 정수로 채워진 배열을 생성합니다.
-print(state)
-# 추출하고자 하는 영역의 시작 인덱스를 지정합니다.
-x_start = 1 # x 축 시작 인덱스
-y_start = 2  # y 축 시작 인덱스
-z_start = 0   # z 축 시작 인덱스
+# np.random.seed(1)
+# state = np.random.randint(0, 50, size=(3, 3, 1), dtype=np.uint8)
+# info = np.random. randint(0,10,size=(2,2,1),dtype=np.uint8)
+#
+# print("state",state)
+#
+# test = state[:2,:2,:]
+# print("test",test)
+#
+# print("info",info)
+#
+# test2 = state[:2,:2,:]+info
+# print("test2",test2)
 
-# 추출하고자 하는 영역의 크기를 지정합니다.
-x_size = 2  # x 축 크기
-y_size = 2  # y 축 크기
-z_size = 2  # z 축 크기
-
-# 지정한 시작 인덱스와 크기를 사용하여 영역을 추출합니다.
-extracted_area = state[x_start:x_start+x_size, y_start:y_start+y_size, z_start:z_start+z_size]
-print(extracted_area.shape)
+# # 위 코드는 0부터 255 사이의 무작위 정수로 채워진 배열을 생성합니다.
+# print(state)
+# # 추출하고자 하는 영역의 시작 인덱스를 지정합니다.
+# x_start = 1 # x 축 시작 인덱스
+# y_start = 2  # y 축 시작 인덱스
+# z_start = 0   # z 축 시작 인덱스
+#
+# # 추출하고자 하는 영역의 크기를 지정합니다.
+# x_size = 2  # x 축 크기
+# y_size = 2  # y 축 크기
+# z_size = 2  # z 축 크기
+#
+# # 지정한 시작 인덱스와 크기를 사용하여 영역을 추출합니다.
+# extracted_area = state[x_start:x_start+x_size, y_start:y_start+y_size, z_start:z_start+z_size]
+# print(extracted_area.shape)
 
 
 # import numpy as np
@@ -136,3 +149,107 @@ print(extracted_area.shape)
 #
 # def train(self, states, targets):
 #     self.model.fit(states, targets, epochs=1, verbose=0)
+
+
+import numpy as np
+
+
+def create_array(shape):
+    """
+    지정된 형태(shape)의 1부터 1씩 증가하는 숫자로 채워진 NumPy 배열을 생성합니다.
+
+    :param shape: 배열의 형태를 나타내는 튜플 (예: (7, 7, 1))
+    :return: 생성된 NumPy 배열
+    """
+    total_elements = np.prod(shape)  # 배열 요소의 총 개수 계산
+    incremental_array = np.arange(1, total_elements + 1).reshape(shape)
+    return incremental_array
+
+
+# 7x7x1 차원의 배열을 생성합니다.
+shape = (7, 7, 1)
+state = create_array(shape)
+#print(state[3:4,3:4,:])
+
+
+info = create_array((2,2,1))
+#print(info)
+
+# 결과 배열 출력
+
+
+
+
+
+x_start = 1
+y_start = 1
+z_start = 1
+
+x_size = 2
+y_size = 2
+z_size = 1
+
+print(state[x_start - x_size-1 :x_start + x_size, y_start - y_size-1 : y_start + y_size,:z_size])
+
+
+a=[1,2,3,4,5,6,7]
+print(a[-1:2])
+
+a=np.random.randint(0,50,size=32)
+print(a)
+batch_size = 32
+indices = range(batch_size)
+print(list(indices))
+
+np.random.seed(1)
+a=np.random.randint(0,10,(3,4))
+print(a)
+print(a.max(axis=1))
+
+
+# def replay(self):  # 업데이트 하는 부분
+#     for _ in range(10):
+#         states, actions, rewards, next_states, done = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음-buffer에는 그냥 model network에서 만든 튜플이 들어가 있음
+#         # states 와 next_states 의 32*p 의 꼴이고, action 은 batch size 길이의 일차원 벡터
+#         targets = self.target_model.predict(states)  # state를 넣었을 때, 액션에 대한 q value 값이 나올 것이다.
+#         # target network으로부터 target을 만들어야 하므로 target에는 32개 각각 10개의 output이 있을 것이므로, 32*10이 되겠지!
+#         # 32*10 라는 틀을 만들어 놓는 것!
+#         next_q_values = self.target_model.predict(next_states).max(
+#             axis=1)  # next state에 대해서 max q value을 예측! batch_size에 들어있는 데이터 next_stae
+#         targets[range(args.batch_size), actions] = rewards + (1 - done) * next_q_values * args.gamma
+#         self.model.train(states, targets)  # 그렇게 targets 에 대한 y value을 구해서 그에 대해서 train을 진행시킴
+#         # state를 넣었을 때의 값과 targets의 값이 같아지도록 업데이트를 해간다.
+
+batch_size = 32
+
+# 가상의 값들
+actions = [1, 0, 2, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 3]  # 각 데이터 포인트에서 선택한 액션
+rewards = [0.2, -0.1, 0.5, 0.3, -0.2, 0.1, 0.2, 0.4, -0.1, 0.5, 0.3, -0.2, 0.1, 0.2, 0.4, -0.1, 0.5, 0.3, -0.2, 0.1, 0.2, 0.4, -0.1, 0.5, 0.3, -0.2, 0.1, 0.2, 0.4, -0.1, 0.5, 0.7]  # 각 데이터 포인트에서 얻은 보상
+done = [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0]  # 각 데이터 포인트에서 게임 종료 여부 (1이면 종료)
+next_q_values = np.random.randint(0,10,(32,10))#[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.7]  # 각 데이터 포인트에서의 다음 상태에서의 최대 Q-값
+# print("next_q_value",next_q_values.shape)
+# print("len",len(actions))
+# print(len(next_q_values[0]))
+import numpy as np
+
+# 가상의 값들
+actions = np.array(actions)
+rewards = np.array(rewards)
+done = np.array(done)
+next_q_values = np.array(next_q_values)
+
+# args 설정
+batch_size = 32
+gamma = 0.95
+
+# targets 계산
+targets = np.zeros((batch_size, len(next_q_values[0])))  # 초기화된 targets 배열 (32x10 크기)
+print(targets)
+#print("shape",targets.shape)
+# targets[range(args.batch_size), actions] 계산
+
+#targets[range(args.batch_size), actions] = rewards + (1 - done) * next_q_values * args.gamma
+
+def plus(self,a):
+    return
+

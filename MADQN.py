@@ -9,17 +9,8 @@ from collections import deque
 import gymnasium as gym
 import tensorflow as tf
 import argparse
+from arguments import args
 
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--gamma', type=float, default=0.95)
-parser.add_argument('--lr', type=float, default=0.005)
-parser.add_argument('--batch_size', type=int, default=32)
-parser.add_argument('--eps', type=float, default=1.0)
-parser.add_argument('--eps_decay', type=float, default=0.995)
-parser.add_argument('--eps_min', type=float, default=0.01)
-
-args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
 
 
 entire_state = (45,45,7)
@@ -30,15 +21,6 @@ n_predator1 = 10
 n_predator2 = 10
 eps_decay = 0.1
 batch_size = 10
-
-
-# 문자열을 역으로 순회하며 첫 번째 나타나는 '_'을 찾음. test 파일 돌려보면 agent 가 "predator_0_23" 꼴로 나오는데, 해당 에이전트의 gnn 및 dqn을 지정해야해서 23을 뽑도록..
-def get_agent_idx(agent): #predator_2_4
-
-    if agent[9] == "1":
-        return int(agent[11:])
-    else: #집단 2 일때
-        return int(agent[11:])+n_predator1 #predator2는 predator1 바로 뒤에 append 되어있기 때문에 n_predator1 을 더해주는 것!
 
 
 
@@ -61,6 +43,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         #shared gnn 의 부분!
         self.shared = np.zeros(self.entire_state)
 
+
+
     def target_update(self): #주기적으로 target 업데이트 함 tensorflow
         for i in range(n_predator1 + n_predator2):
             weights = self.gdqns[i].get_weights()  # behavior network에서 weight들을 가져오고
@@ -70,26 +54,30 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
     def from_guestbook(self, shared, pos, range, entire_state): #에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
         x_start = pos[0]
         y_start = pos[1]
+        z_start = 0
 
         x_size = range
         y_size = range
         z_size = entire_state[2]
 
-        extracted_area = shared[x_start:x_start + x_size, y_start:y_start + y_size, z_start:z_start + z_size] #pos의 값을 정 중앙의 값이므로 수정할 필요 있음
+        extracted_area = shared[x_start:x_start + x_size, y_start:y_start + y_size, z_start : z_start + z_size] #pos의 값을 정 중앙의 값이므로 수정할 필요 있음
         return extraced_area #(8*8*7)으로 출력
+
     def to_guestbook(self,  shared, pos, range, entire_state, info):
         # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
         x_start = pos[0]
         y_start = pos[1]
+        z_start = 0
 
         x_size = range
         y_size = range
         z_size = entire_state[2]
 
-        shared[x_start:x_start + x_size, y_start:y_start + y_size, z_start:z_start + z_size] += info
+        shared[x_start-x_size:x_start + x_size, y_start-y_size:y_start + y_size, z_start:z_start + z_size] += info
 
-    def get_action(self, state, adj, mask = None, from_guestbook, gdqns):
-        q_value, shared = gdqns(self, state, adj, mask=None, from_guestbook)[0]
+    def get_action(self, state, adj, mask = None, extraced_area, idx):
+        book = from_guestbook(self.shared,pos)
+        q_value, shared = self.gdqns[idx](self, state, adj, mask=None, from_guestbook)
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
         self.epsilon = max(self.epsilon, args.eps_min)  # 그리고 args_eps 값의 최소값으로 정해진 것보다는 크도록 설정
           # predict에는 state에 따른 각 action의 값들이 나올건데, 그 값들을 저장하는 것
@@ -98,15 +86,15 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         return np.argmax(q_value)  # 만약 그게 아니라면, q_value 증 가장 크게 하는 인덱스의 값을 추출한다.
 
 
-    def replay(self, buffer, gdqn_target, gdqn_optimizer):
+    def replay(self, gdqn_optimizer, idx, book):
         for _ in range(10):
-            states, actions, rewards, next_states, done = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
-            targets, _ = gdqn_target(state, adj, mask = None, from_guestbook)  # target network으로부터 target을 만들어야 하므로
-            next_q_values, _ = gdqn_target(next_states, adj, mask = None, from_guestbook).max(axis=1)  # next state에 대해서도 q value을 예측
+            states, actions, rewards, next_states, done = self.buffer[idx].sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
+            targets, _ = self.gdqn_target[idx](state, adj, mask = None, book)  # target network으로부터 target을 만들어야 하므로
+            next_q_values, _ = self.gdqns_target[idx](next_states, adj, mask = None, from_guestbook).max(axis=1)  # next state에 대해서도 q value을 예측
             targets[range(args.batch_size), actions] = rewards + (1 - done) * next_q_values * args.gamma
             loss = self.criterion(states, targets)
             loss.backward
-            gdqn_optimizer.step()
+            self.gdqn_optimizer[idx].step()
 
 
     def train(self, max_episodes=1000, render_episodes=100,gdqns): # max_episodes=1000, render_episodes=100 수정필요  env 를 어떻게 받아올지도 생각해야함

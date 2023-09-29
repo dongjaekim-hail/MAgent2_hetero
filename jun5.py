@@ -37,8 +37,9 @@ class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초
    def sample(self):
       sample = random.sample(self.buffer, args.batch_size)   #batch size만큼 buffer에서 가져온다.
       states, actions, rewards, next_states, done = map(np.asarray, zip(*sample)) #map 은 넘파이 형태로 변형시키는 것이고, zip은 리스트를 풀어서 각 데이터 유형에 대한 리스트를 얻는다.
-      states = np.array(states).reshape(args.batch_size, -1)
-      next_states = np.array(next_states).reshape(args.batch_size, -1)
+      # states, actions, rewards에는 각각 batch_size 만큼의 내용이 들어있다.
+      states = np.array(states).reshape(args.batch_size, -1) #batch_size=32 이므로, 32*p 식으로 즉, 각 state를 쭉 펴겟다는 말
+      next_states = np.array(next_states).reshape(args.batch_size, -1) #next_states 도 쭉 펴겠다는 말
       return states, actions, rewards, next_states, done     #buffer에서 데이터 받아서 반환하는 과정을 거침
 
    def size(self):
@@ -103,30 +104,35 @@ class Agent: #사실상 이게 main이다.
       weights = self.model.model.get_weights()       #behavior network에서 weight들을 가져오고
       self.target_model.model.set_weights(weights)   #target model network의 weight들에 그대로 복사하는 과정
 
-   def replay(self): #업데이트 하는 부분
+   def replay(self): #업데이트 하는 부분! 10번을 반복해야 하는데, 한 번 마다 batch_size 크기에 대해서 해야함
       for _ in range(10):
-         states, actions, rewards, next_states, done = self.buffer.sample()  #위의 생성한 buffer에서 하나의 sample을 뽑음
-         targets = self.target_model.predict(states)   #target network으로부터 target을 만들어야 하므로
-         next_q_values = self.target_model.predict(next_states).max(axis=1) #next state에 대해서도 q value을 예측
+         states, actions, rewards, next_states, done = self.buffer.sample()  #위의 생성한 buffer에서 하나의 sample을 뽑음-buffer에는 그냥 model network에서 만든 튜플이 들어가 있음
+         #states 와 next_states 의 32*p 의 꼴이고, action 은 batch size 길이의 일차원 벡터
+         targets = self.target_model.predict(states)
+         #state를 넣었을 때, 액션에 대한 q value 값이 나올 것이다.
+         #target network으로부터 target을 만들어야 하므로 target에는 32개 각각 10개의 output이 있을 것이므로, 32*10이 되겠지!
+         #32*10 라는 틀을 만들어 놓는 것!
+         next_q_values = self.target_model.predict(next_states).max(axis=1) #next state에 대해서 max q value을 예측! 32*1 의 꼴이다.
          targets[range(args.batch_size), actions] = rewards + (1 - done) * next_q_values * args.gamma
          self.model.train(states, targets)  #그렇게 targets 에 대한 y value을 구해서 그에 대해서 train을 진행시킴
+         #state를 넣었을 때의 값과 targets의 값이 같아지도록 업데이트를 해간다.
 
    def train(self, max_episodes=1000, render_episodes=100):
-      for ep in range(max_episodes):
+      for ep in range(max_episodes): #1000번의 episode를 진행한다.
          done, total_reward = False, 0
          state, _ = self.env.reset()
-         while not done:   #한 에피소드에서 매 step 별로 진행한다는 말
+         while not done:   #한 에피소드에서 에피소드가 끝날때까지 데이터를 모은다.
             action = self.model.get_action(state)
             next_state, reward, done, _, _ = self.env.step(action)
             self.buffer.put(state, action, reward * 0.01, next_state, done)
             total_reward += reward
             state = next_state							#에피소드 끝날때까지 버퍼에 경험들을 모으는 과정
-         if self.buffer.size() >= args.batch_size:		#다 모으고 나서...
-            self.replay()
-         self.target_update()
-         print('EP{} EpisodeReward={}'.format(ep, total_reward))
+         if self.buffer.size() >= args.batch_size:		#다 모으고 나서...batch_size 크게 모였으면 self.replay()를 한다. 그렇게 10*batch_size 의 데이터로 업데이트를 한다.
+            self.replay()                               #에피소드 한 번 돌때마다 업데이트를 한다.
+         self.target_update()                           #그리고 target을 업데이트 한다.
+         print('EP{} EpisodeReward={}'.format(ep, total_reward)) #
          # wandb.log({'Reward': total_reward})
-         if (ep+1) % render_episodes == 0:
+         if (ep+1) % render_episodes == 0:              #한번 업데이트하고 업데이트된 model 로 render를 돌리는 것이다.
             state, _ = self.env.reset()
             while not done:
                self.env.render()
