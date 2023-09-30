@@ -6,10 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun4.py" beforeDir="false" afterPath="$PROJECT_DIR$/jun4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/MADQN.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/magent2/jun5.py" beforeDir="false" afterPath="$PROJECT_DIR$/jun5.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MADQN_junhyeon.py" beforeDir="false" afterPath="$PROJECT_DIR$/MADQN_junhyeon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" beforeDir="false" afterPath="$PROJECT_DIR$/magent2/environments/hetero_adversarial/hetero_adversarial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -219,20 +218,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>50</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>75</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="handles[3]" />

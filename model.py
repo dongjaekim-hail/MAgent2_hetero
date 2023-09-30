@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import DenseSAGEConv
 import numpy as np
+from collections import deque
 import torch.optim as optim
 from arguments import args
 
@@ -12,9 +13,9 @@ from arguments import args
 class G_DQN(nn.Module):
     def __init__(self,  dim_act, observation_state):
         super(G_DQN, self).__init__()
-        self.eps_decay = args.epe_decay #이걸 어디에 해야하나..
+        self.eps_decay = args.eps_decay
 
-        self.observation_state= observation_state
+        self.observation_state = observation_state
         self.dim_act = dim_act
 
         #GRAPH
@@ -33,10 +34,10 @@ class G_DQN(nn.Module):
         #self.optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.l2)
 
     # shared_graph는 MADQN class 위에 선언될 shared graph 인스턴스를 객체로 받아, 그 객체에 정보를 저장하고, 그것으로부터 정보를 가져오도록 구성한다.
-    def forward(self, state, adj, mask = None, from_guestbook): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고
+    def forward(self, state, adj, info): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고
         x = state.reshape(-1, self.dim_feature) #(8*8*7)를 (64*7)으로 변경하여 그래프의 featur metrix으로 바꾸어주는 역활!
-        x = self.gnn1(x, adj, mask) #노드끼리 fully connective 되어 있다는 가정아래!
-        x = self.gnn2(x, adj, mask) #원래는 self.gnn2(x, adj)으로 mask 된 부분이 없었긴 했는데,, 왜 여긴 mask가 없지?
+        x = self.gnn1(adj,x) #노드끼리 fully connective 되어 있다는 가정아래!gnn어차피 fully connective 여서 mask 인자 없애버림
+        x = self.gnn2(adj,x) #원래는 self.gnn2(x, adj)으로 mask 된 부분이 없었긴 했는데,, 왜 여긴 mask가 없지?
         x = F.elu(x)  # exponential linear unit
         x = x.squeeze()
 
@@ -46,7 +47,7 @@ class G_DQN(nn.Module):
         shared = shared.reshape(self.observation_state) #다시 3*3*7 꼴로 만들어주어야 함-> 이를 shared graph 에 넘겨주어야 한다.
 
         #shared_graph 으로부터 정보를 가져와서 나의 정보와 concat 해야 한다.  8*8*7 과 8*8*7 을 concat 해야 한다.
-        input = np.concatenate((shared, from_guestbook), axis=0) #16*8*7 일 거고
+        input = np.concatenate((shared, info), axis=0) #16*8*7 일 거고
 
         x = state.reshape(-1, self.dim_input) #쭉 펴주고
         x = self.FC1(x)

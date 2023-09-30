@@ -18,9 +18,8 @@ agent = None
 
 
 
-class MADQN(G_DQN):  # def __init__(self,  dim_act, observation_state):
-    def __init__(self, n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act , entire_state):
-        super(MADQN, self).__init__()
+class MADQN():  # def __init__(self,  dim_act, observation_state):
+    def __init__(self, n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act , entire_state, shared):
         self.entire_state = entire_state
         self.predator1_obs = predator1_obs
         self.predator2_obs = predator2_obs
@@ -35,15 +34,23 @@ class MADQN(G_DQN):  # def __init__(self,  dim_act, observation_state):
             G_DQN(self.dim_act, self.predator2_obs) for _ in range(self.n_predator2)]  # 학습의 안정을 위해 target dqn 설정
         self.buffer = [ReplayBuffer() for _ in range(self.n_predator1 + self.n_predator2)]
         self.gdqns_optimizer = [Adam(x.parameters(), lr=0.001) for x in self.gdqns]
-        self.target_optimizer = [Adam(x.parameters(), lr=0.001) for x in self.gdqns_target]
+        #self.target_optimizer = [Adam(x.parameters(), lr=0.001) for x in self.gdqns_target] #이게 필요하지는 않지 어차피 weight받아와서 업데이트 하는건데
 
         # shared gnn 의 부분!
-        self.shared = np.zeros(entire_state)
+        self.shared = shared
         self.pos = None
-        self.range = None
+        self.view_range = None
 
         self.adj = None
         self.idx = None
+
+        self.gdqn = None
+        self.gdqn_target = None
+
+        self.gdqn_optimizer = None
+        self.target_optimizer = None
+
+        self.buffer = None
 
 
 
@@ -59,24 +66,26 @@ class MADQN(G_DQN):  # def __init__(self,  dim_act, observation_state):
     #     self.range = range
     #     self.entire_state = entire_state
 
-    def set_agent_info(self, agent, pos, range, entire_state):
+    def set_agent_info(self, agent, pos, view_range):
 
         if agent[9] == "1": #1번째 predator 집단
             self.idx = int(agent[11:])
             self.adj = np.ones(predator1_adj)
 
             self.pos = pos
-            self.range = range
-            self.entire_state = entire_state
+            self.view_range = view_range
+
         else:               #2번째 predator 집단
             self.idx = int(agent[11:]) + n_predator1
             self.adj = np.ones(predator2_adj)
 
             self.pos = pos
-            self.range = range
-            self.entire_state = entire_state
+            self.view_range = view_range
 
 
+        self.gdqn= self.gdqns[self.idx]
+        self.target_gdqn = self.gdqns_target[self.idx]
+        self.buffer = self.buffer[self.idx]
 
     def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
         x_start = self.pos[0]
@@ -105,9 +114,9 @@ class MADQN(G_DQN):  # def __init__(self,  dim_act, observation_state):
 
         self.shared[x_start - x_size-1 :x_start + x_size, y_start - y_size-1 : y_start + y_size,:z_size] += info
         #shared가 아직 빨간색인 이유 : 아직 None으로 정의가 되어 있어서 그런 것 같음
-    def get_action(self, state, adj, idx, mask=None):
+    def get_action(self, state, adj, mask=None):
         book = self.from_guestbooks()
-        q_value, shared = self.gdqns[idx](state, adj, book, mask=None)
+        q_value, shared = self.gdqn(state, adj, book, mask=None)
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
         self.epsilon = max(self.epsilon, args.eps_min)  # 그리고 args_eps 값의 최소값으로 정해진 것보다는 크도록 설정
         # predict에는 state에 따른 각 action의 값들이 나올건데, 그 값들을 저장하는 것
@@ -118,13 +127,13 @@ class MADQN(G_DQN):  # def __init__(self,  dim_act, observation_state):
     def replay(self, idx, gdqn_optimizer):
         for _ in range(10):
             book = self.from_guestbooks()
-            states, actions, rewards, next_states, done = self.buffer[idx].sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
-            targets, _ = self.gdqns_target[idx](states, self.adj, book, mask=None)  # target network으로부터 target을 만들어야 하므로
-            next_q_values, _ = self.gdqns_target[idx](next_states, self.adj, book, mask=None).max(axis=1)  # next state에 대해서도 q value을 예측
+            states, actions, rewards, next_states, done = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
+            targets, _ = self.gdqn_target(states, self.adj, book, mask=None)  # target network으로부터 target을 만들어야 하므로
+            next_q_values, _ = self.gdqn_target(next_states, self.adj, book, mask=None).max(axis=1)  # next state에 대해서도 q value을 예측
             targets[range(args.batch_size), actions] = rewards + (1 - done) * next_q_values * args.gamma
             loss = self.criterion(states, targets)
             loss.backward
-            gdqn_optimizer[idx].step()
+            gdqn_optimizer.step()
 
     def train(self, max_episodes=1000, render_episodes=100):
                 # max_episodes=1000, render_episodes=100 수정필요  env 를 어떻게 받아올지도 생각해야함
@@ -132,7 +141,31 @@ class MADQN(G_DQN):  # def __init__(self,  dim_act, observation_state):
             done, total_reward = False, 0
             state, _ = self.env.reset()  # 수정필요
             while not done:  # 한 에피소드에서 매 step 별로 진행한다는 말
-                action = self.get_action(gdqns, state=state, self.adj, mask=None)
+                action = self.get_action(gdqns, self.adj,  state=state, mask=None)
+                next_state, reward, done, _, _ = self.env.step(action)  # 수정필요
+                self.buffer.put(state, action, reward * 0.01, next_state, done)
+                total_reward += reward
+                state = next_state  # 에피소드 끝날때까지 버퍼에 경험들을 모으는 과정
+            if self.buffer.size() >= args.batch_size:  # 다 모으고 나서...
+                self.replay()  # 수정필요 내용 :
+            self.target_update()  # 수정필요
+            print('EP{} EpisodeReward={}'.format(ep, total_reward))
+            # wandb.log({'Reward': total_reward})
+            if (ep + 1) % render_episodes == 0:
+                state, _ = self.env.reset()
+                while not done:
+                    self.env.render()
+                    action = gdqns.get_action(state)
+                    next_state, reward, done, _, _ = self.env.step(action)
+
+
+    def train(self, max_episodes=1000, render_episodes=100):
+                # max_episodes=1000, render_episodes=100 수정필요  env 를 어떻게 받아올지도 생각해야함
+        for ep in range(max_episodes):
+            done, total_reward = False, 0
+            state, _ = self.env.reset()  # 수정필요
+            while not done:  # 한 에피소드에서 매 step 별로 진행한다는 말
+                action = self.get_action(gdqns, self.adj,  state=state, mask=None)
                 next_state, reward, done, _, _ = self.env.step(action)  # 수정필요
                 self.buffer.put(state, action, reward * 0.01, next_state, done)
                 total_reward += reward
