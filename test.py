@@ -3,6 +3,7 @@ from MADQN_junhyeon import MADQN
 import arguments
 import argparse
 import numpy as np
+import torch as th
 
 
 
@@ -66,11 +67,12 @@ for ep in range(1000):
 			# 이 함수를 통해 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
 			madqn.set_agent_info(agent, pos, view_range)
 
-
+		
 
 			#  현재 observation를 받아오기 위한 것
 			observation, reward, termination, truncation, info = env.last()
 			observation_temp = observation
+
 
 			#action을 뽑고, 그 액션으로 step을 진행한다.
 
@@ -80,7 +82,7 @@ for ep in range(1000):
 
 				continue
 			else:
-				action = MADQN.get_action(observation, mask=None)
+				action = madqn.get_action(state = observation, mask=None)
 				env.step(action)
 				# action = env.action_space(agent).sample()
 				#한번에 깔끔하게 (observation, action, reward,next_observation , termination, truncation)

@@ -1,20 +1,21 @@
 from model import G_DQN, ReplayBuffer
 import numpy as np
 import random
+import torch as th
 import torch.nn as nn
 from torch.optim import Adam
 from arguments import args
 
 entire_state = (45, 45, 7)
-predator1_obs = (8, 8, 7)
-predator2_obs = (10, 10, 7)
+predator1_obs = (10, 10, 7)
+predator2_obs = (6, 6, 7)
 dim_act = 13
 n_predator1 = 10
 n_predator2 = 10
 eps_decay = 0.1
 batch_size = 10
-predator1_adj = (16,16)
-predator2_adj = (25,25)
+predator1_adj = (100,100)
+predator2_adj = (36,36)
 agent = None
 
 
@@ -98,8 +99,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         y_start = self.pos[1]
         z_start = 0
 
-        x_size = ((self.range)-1) / 2
-        y_size = ((self.range)-1) / 2
+        x_size = int(((self.view_range)-1) / 2)
+        y_size = int(((self.view_range)-1) / 2)
         z_size = self.entire_state[2] #feature_dim 을 가져오는 것
 
 
@@ -121,8 +122,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         self.shared[x_start - x_size-1 :x_start + x_size, y_start - y_size-1 : y_start + y_size,:z_size] += info
         #shared가 아직 빨간색인 이유 : 아직 None으로 정의가 되어 있어서 그런 것 같음
     def get_action(self, state, mask=None):
-        book = self.from_guestbooks()
-        q_value, shared = self.gdqn(state, self.adj, book, mask=None)
+        book = self.from_guestbook()
+        q_value, shared = self.gdqn(state, self.adj, book) #mask 가 없어야 함
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
         self.epsilon = max(self.epsilon, args.eps_min)  # 그리고 args_eps 값의 최소값으로 정해진 것보다는 크도록 설정
         # predict에는 state에 따른 각 action의 값들이 나올건데, 그 값들을 저장하는 것

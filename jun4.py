@@ -260,3 +260,29 @@ print(action_buffer)
 
 a="predator"
 print(a[:8])
+
+
+import torch
+import torchviz
+import torch.nn as nn
+
+# 모델 정의
+class MyModel(nn.Module):
+    def __init__(self):
+        super(MyModel, self).__init__()
+        self.fc1 = nn.Linear(64, 128)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(128, 10)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        return x
+
+# 모델 인스턴스 생성
+model = MyModel()
+
+# 모델의 그래프 시각화 및 이미지로 저장
+x = torch.randn(1, 64)  # 예시 입력 데이터
+torchviz.make_dot(model(x), params=dict(model.named_parameters())).render("my_model", format="png")
