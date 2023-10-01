@@ -200,7 +200,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "hp": 0,
         "speed": 1,
         "view_range": gw.CircleRange(5),
-        "attack_range": gw.CircleRange(5),
+        "attack_range": gw.CircleRange(2),
         "attack_penalty": tag_penalty,
     }
 
@@ -214,7 +214,7 @@ def get_config(map_size, minimap_mode, tag_penalty):
         "hp": 0,
         "speed": 1,
         "view_range": gw.CircleRange(3),
-        "attack_range": gw.CircleRange(3),
+        "attack_range": gw.CircleRange(2),
         "attack_penalty": tag_penalty,
     }
     predator.append(cfg.register_agent_type("predator_2", options2))

@@ -6,6 +6,7 @@ import numpy as np
 from collections import deque
 import torch.optim as optim
 from arguments import args
+import random
 
 #sharedGNN은 전체 에이전트 클래스 들어갈 클래스의 앞부분에 넣으면 될 듯. 그 클래스를 total 이라고 하자.
 #total 안에 action select 하는 부분 넣고, DQN 업데이트 하는 부분도 있어야 할 듯! state 가 들어가서 쭉쭉 들어가서 마지막에 loss 하나만 나오는 거라서 네트워크를 하나로 묶어야 할 것 같고, 이 모델안에 action 선택하는거 있어야 겠는데
@@ -30,7 +31,7 @@ class G_DQN(nn.Module):
         self.FC2 = nn.Linear(128, dim_act)
         self.relu = nn.ReLU(inplace=True)
 
-        self.criterion = nn.MSELoss()
+        #self.criterion = nn.MSELoss()
         #self.optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.l2)
 
     # shared_graph는 MADQN class 위에 선언될 shared graph 인스턴스를 객체로 받아, 그 객체에 정보를 저장하고, 그것으로부터 정보를 가져오도록 구성한다.
@@ -65,15 +66,15 @@ class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초
                                     #append를 통해 가장 오른쪽에 데이터를 추가하고 appendleft를 통해 왼쪽에 추가한다.
                                     #maxlen을 넘으면 자동으로 왼쪽에서 삭제된다.
 
-   def put(self, state, action, reward, next_state, done):
-      self.buffer.append([state, action, reward, next_state, done]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
+   def put(self, observation, action, reward, next_observation, termination, truncation):
+      self.buffer.append([observation, action, reward, next_observation, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
 
    def sample(self):
       sample = random.sample(self.buffer, args.batch_size)   #batch size만큼 buffer에서 가져온다.
-      states, actions, rewards, next_states, done = map(np.asarray, zip(*sample)) #map 은 넘파이 형태로 변형시키는 것이고, zip은 리스트를 풀어서 각 데이터 유형에 대한 리스트를 얻는다.
-      states = np.array(states).reshape(batch_size, -1)
-      next_states = np.array(next_states).reshape(args.batch_size, -1)
-      return states, actions, rewards, next_states, done     #buffer에서 데이터 받아서 반환하는 과정을 거침
+      observation, action, reward, next_observation, termination, truncation = map(np.asarray, zip(*sample)) #map 은 넘파이 형태로 변형시키는 것이고, zip은 리스트를 풀어서 각 데이터 유형에 대한 리스트를 얻는다.
+      states = np.array(observation).reshape(args.batch_size, -1)
+      next_observation = np.array(next_observation).reshape(args.batch_size, -1)
+      return observation, action, reward, next_observation, termination, truncation     #buffer에서 데이터 받아서 반환하는 과정을 거침
 
    def size(self):
-      return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것(?)
+      return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것

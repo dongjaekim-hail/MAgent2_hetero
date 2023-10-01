@@ -155,7 +155,7 @@ class GridWorld(Environment):
                 buf.ctypes.data_as(ctypes.POINTER(ctypes.c_int32)),
             )
             self.action_space[handle.value] = (buf[0],)
-            print("action feature 왜이러냐고")
+
 
 
     def reset(self):

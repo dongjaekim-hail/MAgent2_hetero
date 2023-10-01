@@ -252,4 +252,11 @@ print(targets)
 
 def plus(self,a):
     return
+action_buffer = {i: 0 for i in range(30)}
 
+action_buffer[3]=19
+print(action_buffer)
+
+
+a="predator"
+print(a[:8])

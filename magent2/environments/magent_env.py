@@ -60,8 +60,8 @@ class magent_parallel_env(ParallelEnv):
             for i in range(self.team_sizes[j])
         ]
         # may change depending on environment config? Not sure.
-        team_obs_shapes = self._calc_obs_shapes() #team_obs_shapes[(10, 10, 5), (9, 9, 5)]
-        state_shape = self._calc_state_shape()    #state_shape=(45, 45, 5)
+        team_obs_shapes = self._calc_obs_shapes()
+        state_shape = self._calc_state_shape()
         observation_space_list = [
             Box(low=0.0, high=2.0, shape=team_obs_shapes[j], dtype=np.float32)
             for j in range(len(self.team_sizes))
