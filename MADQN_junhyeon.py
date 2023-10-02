@@ -97,38 +97,145 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         self.buffer = self.buffers[self.idx]
 
     def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
-        x_start = self.pos[0]
-        print("x_start",x_start)
-        y_start = self.pos[1]
+        x_start = self.pos[0] + 10
+        print("x_start", x_start)
+        y_start = self.pos[1] + 10
         print("y_start", y_start)
         z_start = 0
 
-        x_range = int(self.view_range) #사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
-        y_range = int(self.view_range)
-        z_range= self.entire_state[2] #feature_dim 을 가져오는 것
-
-
-        extracted_area = self.shared[x_start-x_range:x_start + x_range, y_start - y_range : y_start + y_range,:z_range]
-        print("extracted_area",extracted_area.shape)
-        #구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
-        return extracted_area  # (8*8*7)으로 출력
-
-    def to_guestbook(self, info): #info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
-        # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
-        #shared 와 info 모두 3차원형태
-        print("info type",type(info))
-        print("shared type", type(self.shared))
-
-        x_start = self.pos[0]
-        y_start = self.pos[1]
-        z_start = 0
-
-        x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+        x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
         y_range = int(self.view_range)
         z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
 
-        self.shared[x_start - x_range :x_start + x_range, y_start - y_range : y_start + y_range,:z_range] += info
-        #shared가 아직 빨간색인 이유 : 아직 None으로 정의가 되어 있어서 그런 것 같음
+        extracted_area = self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range,
+                         :z_range]
+        print("extracted_area", extracted_area.shape)
+        # 구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
+
+        return extracted_area  # (887)으로 출력
+
+    def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
+
+        x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+        y_range = int(self.view_range)
+        z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
+
+        x_start = self.pos[0] + 10
+        print("x_start", x_start)
+        y_start = self.pos[1] + 10
+        print("y_start", y_start)
+        z_start = 0
+
+
+
+        extracted_area = self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range,
+                         :z_range]
+        print("extracted_area", extracted_area.shape)
+        # 구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
+
+        return extracted_area  # (887)으로 출력
+
+
+    # def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
+    #     x_start = self.pos[0] + 10
+    #     print("x_start", x_start)
+    #     y_start = self.pos[1] + 10
+    #     print("y_start", y_start)
+    #     z_start = 0
+    #
+    #     x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+    #     y_range = int(self.view_range)
+    #     z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
+    #
+    #     extracted_area = self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range,
+    #                      :z_range]
+    #     print("extracted_area", extracted_area.shape)
+    #     # 구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
+    #
+    #     return extracted_area  # (887)으로 출력
+
+    # def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
+    #     x_start = self.pos[0]
+    #     print("x_start",x_start)
+    #     y_start = self.pos[1]
+    #     print("y_start", y_start)
+    #     z_start = 0
+    #
+    #     x_range = int(self.view_range) #사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+    #     y_range = int(self.view_range)
+    #     z_range= self.entire_state[2] #feature_dim 을 가져오는 것
+    #
+    #
+    #     extracted_area = self.shared[x_start-x_range:x_start + x_range, y_start - y_range : y_start + y_range,:z_range]
+    #     print("extracted_area",extracted_area.shape)
+    #     #구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
+    #     # print("extracted_area", extracted_area.shape)
+    #     # print(f"Shared shape : {self.shared.shape}, Range : {x_start - x_range} ~ {x_start + x_range - 1}")
+    #
+    #     return extracted_area  # (8*8*7)으로 출력
+
+    def to_guestbook(self, info):  # info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
+        # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
+        # shared 와 info 모두 3차원형태
+        print("info type", type(info))
+        print("shared type", type(self.shared))
+
+        x_start = self.pos[0] + 10
+        y_start = self.pos[1] + 10
+        z_start = 0
+
+        x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+        y_range = int(self.view_range)
+        z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
+
+        self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range, :z_range] += info
+
+        # shared 배열에서 해당 부분을 0으로 설정합니다.
+        self.shared[0:10, 0:10, :z_range] = 0
+        self.shared[55:65, 55:65, :z_range] = 0
+
+    # def to_guestbook(self, info):  # info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
+    #     # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
+    #     # shared 와 info 모두 3차원형태
+    #     print("info type", type(info))
+    #     print("shared type", type(self.shared))
+    #
+    #     x_start = self.pos[0] + 10
+    #     y_start = self.pos[1] + 10
+    #     z_start = 0
+    #
+    #     x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+    #     y_range = int(self.view_range)
+    #     z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
+    #
+    #     self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range, :z_range] += info
+    #
+    #     x_start_clip = max(0, min(x_start - x_range, 65))
+    #     x_end_clip = min(10, max(x_start + x_range, 45))
+    #     y_start_clip = max(0, min(y_start - y_range, 65))
+    #     y_end_clip = min(10, max(y_start + y_range, 45))
+    #
+    #     # shared 배열에서 해당 부분을 0으로 설정합니다.
+    #     self.shared[x_start_clip - x_range:x_end_clip + x_range,
+    #     y_start_clip - y_range:y_end_clip + y_range,
+    #     :z_range] = 0
+
+    # def to_guestbook(self, info): #info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
+    #     # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
+    #     #shared 와 info 모두 3차원형태
+    #     print("info type",type(info))
+    #     print("shared type", type(self.shared))
+    #
+    #     x_start = self.pos[0]
+    #     y_start = self.pos[1]
+    #     z_start = 0
+    #
+    #     x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+    #     y_range = int(self.view_range)
+    #     z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
+    #
+    #     self.shared[x_start - x_range :x_start + x_range, y_start - y_range : y_start + y_range,:z_range] += info
+    #     #shared가 아직 빨간색인 이유 : 아직 None으로 정의가 되어 있어서 그런 것 같음
     def get_action(self, state, mask=None):
         print("________________________________________")
         print(state)
@@ -140,11 +247,12 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         # predict에는 state에 따른 각 action의 값들이 나올건데, 그 값들을 저장하는 것
         if np.random.random() < self.epsilon:  # 0부터 1까지 랜덤한 숫자를 생성하고, 그 수가 입실론보다 작으면 action을 랜덤으로 뽑는다.
             return random.randint(0, self.dim_act - 1)  # 그래서 0부터 action_dim-1 까지의 정수중에서 랜덤으로 하나 뽑는 거다.
-        return np.argmax(q_value)  # 만약 그게 아니라면, q_value 증 가장 크게 하는 인덱스의 값을 추출한다.
+        return torch.argmax(q_value).item()
+        #return np.argmax(q_value)  # 만약 그게 아니라면, q_value 증 가장 크게 하는 인덱스의 값을 추출한다.
 
     def replay(self, gdqn_optimizer):
         for _ in range(10):
-            book = self.from_guestbooks()
+            book = self.from_guestbook()
             observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
             targets, _ = self.gdqn_target(observations, self.adj, book, mask=None)  # target network으로부터 target을 만들어야 하므로
             next_q_values, _ = self.gdqn_target(next_observations, self.adj, book, mask=None).max(axis=1)  # next state에 대해서도 q value을 예측

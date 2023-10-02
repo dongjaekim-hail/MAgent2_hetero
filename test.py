@@ -21,7 +21,7 @@ render_mode = 'rgb_array'
 env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
 								max_cycles=50000, extra_features=False,render_mode=render_mode)
 
-entire_state = (45,45,7)
+entire_state = (65,65,7)
 predator1_obs = (10,10,7)
 predator2_obs = (6,6,7)
 dim_act = 13
@@ -31,9 +31,9 @@ n_predator2 = 10
 batch_size = 10
 predator1_view_range = 5
 predator2_view_range = 3
-shared = np.zeros(entire_state)
 
-shared = th.zeros((45, 45, 7))
+
+shared = th.zeros(entire_state)
 madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state,shared)
 
 
