@@ -33,7 +33,7 @@ predator1_view_range = 5
 predator2_view_range = 3
 shared = np.zeros(entire_state)
 
-shared = np.zeros(entire_state)
+shared = th.zeros((45, 45, 7))
 madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state,shared)
 
 

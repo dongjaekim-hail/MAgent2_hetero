@@ -278,3 +278,16 @@ info = torch.zeros((10, 10, 7))  # 원하는 크기로 초기화
 shared = torch.zeros((10, 10, 7))  # 원하는 크기로 초기화
 input = torch.cat((shared, info), dim=0)
 print(input.shape)
+
+import torch
+import numpy as np
+
+# PyTorch Tensor 생성
+tensor = torch.tensor([1, 2, 3])
+
+# Tensor를 NumPy 배열로 변환
+numpy_array = tensor.numpy()
+
+# 결과 출력
+print(type(numpy_array))
+

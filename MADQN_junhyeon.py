@@ -1,7 +1,7 @@
 from model import G_DQN, ReplayBuffer
 import numpy as np
 import random
-import torch as th
+import torch
 import torch.nn as nn
 from torch.optim import Adam
 from arguments import args
@@ -116,15 +116,18 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
     def to_guestbook(self, info): #info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
         # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
         #shared 와 info 모두 3차원형태
+        print("info type",type(info))
+        print("shared type", type(self.shared))
+
         x_start = self.pos[0]
         y_start = self.pos[1]
         z_start = 0
 
-        x_size = (self.range - 1) / 2
-        y_size = (self.range - 1) / 2
-        z_size = self.entire_state[2]  # feature_dim 을 가져오는 것
+        x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+        y_range = int(self.view_range)
+        z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
 
-        self.shared[x_start - x_size-1 :x_start + x_size, y_start - y_size-1 : y_start + y_size,:z_size] += info
+        self.shared[x_start - x_range :x_start + x_range, y_start - y_range : y_start + y_range,:z_range] += info
         #shared가 아직 빨간색인 이유 : 아직 None으로 정의가 되어 있어서 그런 것 같음
     def get_action(self, state, mask=None):
         print("________________________________________")
