@@ -28,6 +28,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         self.n_predator1 = n_predator1
         self.n_predator2 = n_predator2
         self.dim_act = dim_act
+        self.epsilon = args.eps
+        self.eps_decay = args.eps_decay
 
         # 초반 n_predator1 개는 predator1의 dqn 이고, 그 뒤의 것은 predator2 의 dqn 둘의 observation 이 다르기 때문에 다른 dqn을 사용해야 한다.
         self.gdqns = [G_DQN(self.dim_act, self.predator1_obs) for _ in range(self.n_predator1)] + [
@@ -96,15 +98,18 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
     def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
         x_start = self.pos[0]
+        print("x_start",x_start)
         y_start = self.pos[1]
+        print("y_start", y_start)
         z_start = 0
 
-        x_size = int(((self.view_range)-1) / 2)
-        y_size = int(((self.view_range)-1) / 2)
-        z_size = self.entire_state[2] #feature_dim 을 가져오는 것
+        x_range = int(self.view_range) #사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
+        y_range = int(self.view_range)
+        z_range= self.entire_state[2] #feature_dim 을 가져오는 것
 
 
-        extracted_area = self.shared[x_start - x_size-1 :x_start + x_size, y_start - y_size-1 : y_start + y_size,:z_size]
+        extracted_area = self.shared[x_start-x_range:x_start + x_range, y_start - y_range : y_start + y_range,:z_range]
+        print("extracted_area",extracted_area.shape)
         #구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
         return extracted_area  # (8*8*7)으로 출력
 
@@ -122,8 +127,11 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         self.shared[x_start - x_size-1 :x_start + x_size, y_start - y_size-1 : y_start + y_size,:z_size] += info
         #shared가 아직 빨간색인 이유 : 아직 None으로 정의가 되어 있어서 그런 것 같음
     def get_action(self, state, mask=None):
-        book = self.from_guestbook()
-        q_value, shared = self.gdqn(state, self.adj, book) #mask 가 없어야 함
+        print("________________________________________")
+        print(state)
+        book = self.from_guestbook() #self.pos에 기록된 값을 참고하여 shared graph에서 정보를 가져오는데,,,여기서 문제가 발생한다.
+        q_value, shared_info = self.gdqn(state, self.adj, book) #shared_info : shared graph에 넘겨주어야 할 정보들
+        self.to_guestbook(shared_info) #shared_graph에 받아온 정보를 넘겨준다.
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
         self.epsilon = max(self.epsilon, args.eps_min)  # 그리고 args_eps 값의 최소값으로 정해진 것보다는 크도록 설정
         # predict에는 state에 따른 각 action의 값들이 나올건데, 그 값들을 저장하는 것

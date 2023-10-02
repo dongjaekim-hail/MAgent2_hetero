@@ -262,27 +262,19 @@ a="predator"
 print(a[:8])
 
 
+
 import torch
-import torchviz
-import torch.nn as nn
 
-# 모델 정의
-class MyModel(nn.Module):
-    def __init__(self):
-        super(MyModel, self).__init__()
-        self.fc1 = nn.Linear(64, 128)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(128, 10)
+# 두 개의 텐서 생성
+tensor1 = torch.randn(3, 4)
+tensor2 = torch.randn(2, 4)
 
-    def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
-        return x
+# 두 텐서를 연결 (기본적으로 dim=0으로 연결됨)
+result = torch.cat((tensor1, tensor2), dim=0)
+print(result.shape)
 
-# 모델 인스턴스 생성
-model = MyModel()
 
-# 모델의 그래프 시각화 및 이미지로 저장
-x = torch.randn(1, 64)  # 예시 입력 데이터
-torchviz.make_dot(model(x), params=dict(model.named_parameters())).render("my_model", format="png")
+info = torch.zeros((10, 10, 7))  # 원하는 크기로 초기화
+shared = torch.zeros((10, 10, 7))  # 원하는 크기로 초기화
+input = torch.cat((shared, info), dim=0)
+print(input.shape)
