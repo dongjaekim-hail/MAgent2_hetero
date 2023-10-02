@@ -92,7 +92,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
 
         self.gdqn= self.gdqns[self.idx]
-        self.target_gdqn = self.gdqn_targets[self.idx]
+        self.gdqn_target = self.gdqn_targets[self.idx]
         self.gdqn_optimizer = self.gdqn_optimizers[self.idx]
         self.buffer = self.buffers[self.idx]
 
@@ -254,7 +254,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         for _ in range(10):
             book = self.from_guestbook()
             observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
-            targets, _ = self.gdqn_target(observations, self.adj, book, mask=None)  # target network으로부터 target을 만들어야 하므로
+            targets, _ = self.gdqn_target(observations, self.adj, book)  # target network으로부터 target을 만들어야 하므로
             next_q_values, _ = self.gdqn_target(next_observations, self.adj, book, mask=None).max(axis=1)  # next state에 대해서도 q value을 예측
             targets[range(args.batch_size), actions] = rewards + (1 - termination) * next_q_values * args.gamma
             loss = self.criterion(observations, targets)
