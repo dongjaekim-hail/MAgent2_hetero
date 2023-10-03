@@ -278,7 +278,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             print("termination정체",1-int(termination[0]))
             targets = int(rewards[0]) + (1 - int(termination[0])) * next_q_values * args.gamma
             loss = self.criterion(q_values, targets)
-            loss.backward()
+            loss.backward(retain_graph=True)
+            #loss.backward()
             self.gdqn_optimizer.step()
 
     # def replay(self):

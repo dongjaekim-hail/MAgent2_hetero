@@ -36,11 +36,11 @@ class G_DQN(nn.Module):
 
     # shared_graph는 MADQN class 위에 선언될 shared graph 인스턴스를 객체로 받아, 그 객체에 정보를 저장하고, 그것으로부터 정보를 가져오도록 구성한다.
     def forward(self, state, adj, info): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고
-
+        torch.autograd.set_detect_anomaly(True)
         #state = torch.from_numpy(state).float() #densesageConv는 'numpy.ndarray'으로는 작동하지 않기 때문에 그냥 tensor으로 변경해야 한다.
 
         if isinstance(state, np.ndarray):
-            state = torch.from_numpy(state).float()
+            state = torch.tensor(state).float()
         else:
             pass
 
@@ -85,6 +85,7 @@ class G_DQN(nn.Module):
 
         #print(type(dqn)) #torch.tensor
         return x, shared #shared_graph에 넣는건 밖에서 진행하자.
+        torch.autograd.set_detect_anomaly(False)
 
 
     #업데이트 하는 부분이랑, 옵티마시져랑 loss 를 기록해 놓아야 할 거 같은데
