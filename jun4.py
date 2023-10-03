@@ -291,3 +291,9 @@ numpy_array = tensor.numpy()
 # 결과 출력
 print(type(numpy_array))
 
+x= [1,2,3]
+a,b,c = x
+print(len(x))
+print(a)
+print(b)
+print(c)

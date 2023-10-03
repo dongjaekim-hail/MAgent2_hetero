@@ -36,14 +36,18 @@ class G_DQN(nn.Module):
 
     # shared_graph는 MADQN class 위에 선언될 shared graph 인스턴스를 객체로 받아, 그 객체에 정보를 저장하고, 그것으로부터 정보를 가져오도록 구성한다.
     def forward(self, state, adj, info): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고
-        state = torch.Tensor(state) #densesageConv는 'numpy.ndarray'으로는 작동하지 않기 때문에 그냥 tensor으로 변경해야 한다.
-        adj = torch.Tensor(adj)
-        info = torch.Tensor(info)
-        print("state",state.shape)
+        state = torch.from_numpy(state).float() #densesageConv는 'numpy.ndarray'으로는 작동하지 않기 때문에 그냥 tensor으로 변경해야 한다.
+        #adj = torch.from_numpy(adj).float()
+        #info = torch.from_numpy(info)
+
+
+        print("state뭔데?",state.shape)
+        #state = state.squeeze()
 
         x = state.reshape(-1, self.dim_feature) #(10*10*7)를 (100*7)으로 변경하여 그래프의 featur metrix으로 바꾸어주는 역활!
         print("x1",x.shape)
-
+        print("ㅠㅠㅠ",type(x))
+        print("ㅠㅠㅠ", type(adj))
         x = self.gnn1(x,adj) #노드끼리 fully connective 되어 있다는 가정아래!gnn어차피 fully connective 여서 mask 인자 없애버림
         x = self.gnn2(x,adj)
         x = F.elu(x)  # exponential linear unit
@@ -86,12 +90,20 @@ class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초
    def put(self, observation, action, reward, next_observation, termination, truncation):
       self.buffer.append([observation, action, reward, next_observation, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
 
+   # def sample(self):
+   #    sample = random.sample(self.buffer, args.batch_size)   #batch size만큼 buffer에서 가져온다.
+   #    observation, action, reward, next_observation, termination, truncation = map(np.asarray, zip(*sample)) #map 은 넘파이 형태로 변형시키는 것이고, zip은 리스트를 풀어서 각 데이터 유형에 대한 리스트를 얻는다.
+   #    states = np.array(observation).reshape(args.batch_size, -1)
+   #    next_observation = np.array(next_observation).reshape(args.batch_size, -1)
+   #    return observation, action, reward, next_observation, termination, truncation     #buffer에서 데이터 받아서 반환하는 과정을 거침
+
    def sample(self):
-      sample = random.sample(self.buffer, args.batch_size)   #batch size만큼 buffer에서 가져온다.
-      observation, action, reward, next_observation, termination, truncation = map(np.asarray, zip(*sample)) #map 은 넘파이 형태로 변형시키는 것이고, zip은 리스트를 풀어서 각 데이터 유형에 대한 리스트를 얻는다.
-      states = np.array(observation).reshape(args.batch_size, -1)
-      next_observation = np.array(next_observation).reshape(args.batch_size, -1)
-      return observation, action, reward, next_observation, termination, truncation     #buffer에서 데이터 받아서 반환하는 과정을 거침
+       sample = random.sample(self.buffer, 1)  # batch size만큼 buffer에서 가져온다.
+
+       observation, action, reward, next_observation, termination, truncation = zip(*sample)
+       # states = np.array(observation).reshape(args.batch_size, -1)
+       # next_observation = np.array(next_observation).reshape(args.batch_size, -1)
+       return observation, action, reward, next_observation, termination, truncation  # buffer에서 데이터 받아서 반환하는 과정을 거침
 
    def size(self):
       return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것

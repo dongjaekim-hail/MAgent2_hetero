@@ -78,14 +78,14 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
         if agent[9] == "1": #1번째 predator 집단
             self.idx = int(agent[11:])
-            self.adj = np.ones(predator1_adj)
+            self.adj = torch.ones(predator1_adj)
 
             self.pos = pos
             self.view_range = view_range
 
         else:               #2번째 predator 집단
             self.idx = int(agent[11:]) + n_predator1
-            self.adj = np.ones(predator2_adj)
+            self.adj = torch.ones(predator2_adj)
 
             self.pos = pos
             self.view_range = view_range
@@ -177,8 +177,6 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
     def to_guestbook(self, info):  # info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
         # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
         # shared 와 info 모두 3차원형태
-        print("info type", type(info))
-        print("shared type", type(self.shared))
 
         x_start = self.pos[0] + 10
         y_start = self.pos[1] + 10
@@ -193,6 +191,10 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         # shared 배열에서 해당 부분을 0으로 설정합니다.
         self.shared[0:10, 0:10, :z_range] = 0
         self.shared[55:65, 55:65, :z_range] = 0
+
+        print("info type", type(info))
+        print("shared type", type(self.shared))
+        print("_________________________________________")
 
     # def to_guestbook(self, info):  # info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
     #     # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
@@ -250,16 +252,50 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         return torch.argmax(q_value).item()
         #return np.argmax(q_value)  # 만약 그게 아니라면, q_value 증 가장 크게 하는 인덱스의 값을 추출한다.
 
-    def replay(self, gdqn_optimizer):
+    def replay(self):
         for _ in range(10):
             book = self.from_guestbook()
             observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
-            targets, _ = self.gdqn_target(observations, self.adj, book)  # target network으로부터 target을 만들어야 하므로
-            next_q_values, _ = self.gdqn_target(next_observations, self.adj, book, mask=None).max(axis=1)  # next state에 대해서도 q value을 예측
-            targets[range(args.batch_size), actions] = rewards + (1 - termination) * next_q_values * args.gamma
-            loss = self.criterion(observations, targets)
-            loss.backward
-            gdqn_optimizer.step()
+
+            # next_observations = np.numpy(next_observations)
+            # observations = np.numpy(observations)
+
+            next_observations = torch.from_numpy(next_observations)
+            observations = torch.from_numpy(observations)
+
+            # print("이게뭔데ㅠㅠ",next_observations.shape)
+            # print("이게뭔데ㅠㅠ", type(next_observations))
+
+            #targets, _ = self.gdqn_target(observations, self.adj, book)  # target 틀을 만드는 것 (32,13) 32:batch_size 13:act_dim
+            #q_values, _ = self.gdqn(observations, self.adj, book).max(axis=1) # 실제로 observation에서의 q 값
+            q_values, _ = self.gdqn(observations, self.adj, book)# 실제로 observation에서의 q 값
+            q_values = q_values[0][actions]
+
+            next_q_values, _ = max(self.gdqn_target(next_observations, self.adj, book))  # next state에 대해서 target 값
+            targets = rewards + (1 - termination) * next_q_values * args.gamma
+            loss = self.criterion(q_values, targets)
+            loss.backward()
+            self.gdqn_optimizer.step()
+
+    # def replay(self):
+    #     for _ in range(10):
+    #         book = self.from_guestbook()
+    #         observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()
+    #
+    #         # 각 샘플에 대한 Q-value 예측을 계산
+    #         qvalues, = self.gdqn(observations, self.adj, book)
+    #         next_qvalues, = self.target_gdqn(next_observations, self.adj, book)
+    #
+    #         # Q-value 업데이트
+    #         targets = q_values.clone().detach()
+    #         for i in range(len(targets)):
+    #             targets[i][actions[i]] = rewards[i] + (1 - termination[i]) * args.gamma * next_q_values[i].max().item()
+    #
+    #         # 손실 계산 및 역전파
+    #         loss = self.criterion(q_values, targets)
+    #         self.gdqn_optimizer.zero_grad()
+    #         loss.backward()
+    #         self.gdqn_optimizer.step()
 
     # def train(self, max_episodes=1000, render_episodes=100):
     #             # max_episodes=1000, render_episodes=100 수정필요  env 를 어떻게 받아올지도 생각해야함

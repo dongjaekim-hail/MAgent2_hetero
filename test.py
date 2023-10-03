@@ -1,6 +1,6 @@
 from magent2.environments import hetero_adversarial_v1
 from MADQN_junhyeon import MADQN
-import arguments
+from arguments import args
 import argparse
 import numpy as np
 import torch as th
@@ -83,17 +83,21 @@ for ep in range(1000):
 				continue
 			else:
 				action = madqn.get_action(state = observation, mask=None)
+				#print("이건 또 뭘까",type(action))
 				env.step(action)
 				# action = env.action_space(agent).sample()
 				#한번에 깔끔하게 (observation, action, reward,next_observation , termination, truncation)
 				#의 형태가 나오는것이 아니기 때문에 위에서 현재 observation을 observation_temp 에 저장했다가 가져오는 것이다.
 				next_observation, reward, termination, truncation, info = env.last()
+				print("이건 또 뭘까",type(next_observation))
+				print("이건 또 뭘까", type(observation)) #지금 받았을때는 넘파인데?
 				madqn.buffer.put(observation_temp, action, reward, observation, termination, truncation)
 				total_reward[idx] += reward
 
 			# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.
 			if madqn.buffer.size() >= args.batch_size:
-				madqn.replay(madqn.gdqn_optimizer)
+				madqn.replay()
+				#madqn.replay(madqn.gdqn_optimizer)
 				madqn.target_update()
 				print('EP{} EpisodeReward={}'.format(ep, total_reward[idx]))
 				#reward의 위치가 여기가 많나...맞는 듯!
