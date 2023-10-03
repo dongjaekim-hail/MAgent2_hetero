@@ -271,8 +271,12 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             q_values, _ = self.gdqn(observations, self.adj, book)# 실제로 observation에서의 q 값
             q_values = q_values[0][actions]
 
-            next_q_values, _ = max(self.gdqn_target(next_observations, self.adj, book))  # next state에 대해서 target 값
-            targets = rewards + (1 - termination) * next_q_values * args.gamma
+            next_q_values, _ = self.gdqn_target(next_observations, self.adj, book)  # next state에 대해서 target 값
+            next_q_values = max(next_q_values)  # next state에 대해서 target 값
+            print("이게 뭐냐고ㅠㅠㅠㅠ",type(next_q_values))
+            print("이게 뭐냐고ㅠㅠㅠㅠ", type(rewards))
+            print("termination정체",1-int(termination[0]))
+            targets = int(rewards[0]) + (1 - int(termination[0])) * next_q_values * args.gamma
             loss = self.criterion(q_values, targets)
             loss.backward()
             self.gdqn_optimizer.step()
