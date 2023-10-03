@@ -257,11 +257,11 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             book = self.from_guestbook()
             observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
 
-            # next_observations = np.numpy(next_observations)
-            # observations = np.numpy(observations)
+            next_observations = torch.tensor(next_observations)
+            observations = torch.tensor(observations)
 
-            next_observations = torch.from_numpy(next_observations)
-            observations = torch.from_numpy(observations)
+            # next_observations = torch.from_numpy(next_observations)
+            # observations = torch.from_numpy(observations)
 
             # print("이게뭔데ㅠㅠ",next_observations.shape)
             # print("이게뭔데ㅠㅠ", type(next_observations))
