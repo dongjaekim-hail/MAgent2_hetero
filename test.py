@@ -5,7 +5,7 @@ import argparse
 import numpy as np
 import torch as th
 
-
+th.autograd.set_detect_anomaly(True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gamma', type=float, default=0.95)
@@ -64,7 +64,7 @@ for ep in range(1000):
 				pos = pos_predator2[idx]
 				view_range = predator2_view_range
 
-			# 이 함수를 통해 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
+			# 이 함수를 통해 현재 돌고 있는 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
 			madqn.set_agent_info(agent, pos, view_range)
 
 		

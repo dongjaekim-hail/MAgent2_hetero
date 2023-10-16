@@ -260,14 +260,6 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             next_observations = torch.tensor(next_observations)
             observations = torch.tensor(observations)
 
-            # next_observations = torch.from_numpy(next_observations)
-            # observations = torch.from_numpy(observations)
-
-            # print("이게뭔데ㅠㅠ",next_observations.shape)
-            # print("이게뭔데ㅠㅠ", type(next_observations))
-
-            #targets, _ = self.gdqn_target(observations, self.adj, book)  # target 틀을 만드는 것 (32,13) 32:batch_size 13:act_dim
-            #q_values, _ = self.gdqn(observations, self.adj, book).max(axis=1) # 실제로 observation에서의 q 값
             q_values, _ = self.gdqn(observations, self.adj, book)# 실제로 observation에서의 q 값
             q_values = q_values[0][actions]
 
@@ -282,47 +274,5 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             #loss.backward()
             self.gdqn_optimizer.step()
 
-    # def replay(self):
-    #     for _ in range(10):
-    #         book = self.from_guestbook()
-    #         observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()
-    #
-    #         # 각 샘플에 대한 Q-value 예측을 계산
-    #         qvalues, = self.gdqn(observations, self.adj, book)
-    #         next_qvalues, = self.target_gdqn(next_observations, self.adj, book)
-    #
-    #         # Q-value 업데이트
-    #         targets = q_values.clone().detach()
-    #         for i in range(len(targets)):
-    #             targets[i][actions[i]] = rewards[i] + (1 - termination[i]) * args.gamma * next_q_values[i].max().item()
-    #
-    #         # 손실 계산 및 역전파
-    #         loss = self.criterion(q_values, targets)
-    #         self.gdqn_optimizer.zero_grad()
-    #         loss.backward()
-    #         self.gdqn_optimizer.step()
-
-    # def train(self, max_episodes=1000, render_episodes=100):
-    #             # max_episodes=1000, render_episodes=100 수정필요  env 를 어떻게 받아올지도 생각해야함
-    #     for ep in range(max_episodes):
-    #         done, total_reward = False, 0
-    #         state, _ = self.env.reset()  # 수정필요
-    #         while not done:  # 한 에피소드에서 매 step 별로 진행한다는 말
-    #             action = self.get_action(gdqns, self.adj,  state=state, mask=None)
-    #             next_state, reward, done, _, _ = self.env.step(action)  # 수정필요
-    #             self.buffer.put(state, action, reward * 0.01, next_state, done)
-    #             total_reward += reward
-    #             state = next_state  # 에피소드 끝날때까지 버퍼에 경험들을 모으는 과정
-    #         if self.buffer.size() >= args.batch_size:  # 다 모으고 나서...
-    #             self.replay()  # 수정필요 내용 :
-    #         self.target_update()  # 수정필요
-    #         print('EP{} EpisodeReward={}'.format(ep, total_reward))
-    #         # wandb.log({'Reward': total_reward})
-    #         if (ep + 1) % render_episodes == 0:
-    #             state, _ = self.env.reset()
-    #             while not done:
-    #                 self.env.render()
-    #                 action = gdqns.get_action(state)
-    #                 next_state, reward, done, _, _ = self.env.step(action)
 
 
