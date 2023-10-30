@@ -61,7 +61,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
 
     def target_update(self):  # 주기적으로 target 업데이트 함 tensorflow 수정해야함
-        weights = self.gdqn.get_weights()  # behavior network에서 weight들을 가져오고
+        weights = self.gdqn.get_weights()  # behavior network에서 weight들을 가져오고 #     없는 함수  변경!
         self.gdqn_target.set_weights(weights)  # target model network의 weight들에 그대로 복사하는 과정
 
 
@@ -100,7 +100,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
         extracted_area = self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range,
                          :z_range]
-        print("extracted_area(1)", extracted_area.shape)
+
         # 구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
 
         return extracted_area  # (887)으로 출력
@@ -124,13 +124,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         self.shared[0:10, 0:10, :z_range] = 0
         self.shared[55:65, 55:65, :z_range] = 0
 
-        print("info type", type(info))
-        print("shared type", type(self.shared))
-        print("_________________________________________")
 
     def get_action(self, state, mask=None):
-        print("________________________________________")
-        print(state)
         book = self.from_guestbook() #self.pos에 기록된 값을 참고하여 shared graph에서 정보를 가져오는데,,,여기서 문제가 발생한다.
         q_value, shared_info = self.gdqn(state, self.adj, book) #shared_info : shared graph에 넘겨주어야 할 정보들
         self.to_guestbook(shared_info) #shared_graph에 받아온 정보를 넘겨준다.
@@ -150,18 +145,17 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             next_observations = torch.tensor(next_observations)
             observations = torch.tensor(observations)
 
-            q_values, _ = self.gdqn(observations, self.adj, book)# 실제로 observation에서의 q 값
+            self.gdqn_optimizer.zero_grad()
+
+            q_values, _ = self.gdqn(observations, self.adj, book.detach())# 실제로 observation에서의 q 값
             q_values = q_values[0][actions]
 
             next_q_values, _ = self.gdqn_target(next_observations, self.adj, book)  # next state에 대해서 target 값
-            print("next_q_value확인", next_q_values)
+
             next_q_values = torch.max(next_q_values)  # next state에 대해서 target 값
-            print("next_q_value확인max",next_q_values)
 
             targets = int(rewards[0]) + (1 - int(termination[0])) * next_q_values * args.gamma
-            print("target형태",targets)
-            print("qvalues_형태", q_values)
-            loss = self.criterion(q_values, targets)
+            loss = self.criterion(q_values, targets.detach())
             #loss.backward(retain_graph=True)
             loss.backward()
             #loss.backward()
