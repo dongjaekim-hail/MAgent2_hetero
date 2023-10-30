@@ -61,8 +61,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
 
     def target_update(self):  # 주기적으로 target 업데이트 함 tensorflow 수정해야함
-        weights = self.gdqn.get_weights()  # behavior network에서 weight들을 가져오고 #     없는 함수  변경!
-        self.gdqn_target.set_weights(weights)  # target model network의 weight들에 그대로 복사하는 과정
+        weights = self.gdqn.state_dict()  # behavior network에서 weight들을 가져오고 #     없는 함수  변경!
+        self.gdqn_target.load_state_dict(weights)  # target model network의 weight들에 그대로 복사하는 과정
 
 
     def set_agent_info(self, agent, pos, view_range):
