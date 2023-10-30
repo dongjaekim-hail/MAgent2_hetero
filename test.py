@@ -21,20 +21,34 @@ render_mode = 'rgb_array'
 env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
 								max_cycles=50000, extra_features=False,render_mode=render_mode)
 
-entire_state = (65,65,7)
-predator1_obs = (10,10,7)
-predator2_obs = (6,6,7)
+entire_state = (65,65,3)
+predator1_obs = (10,10,3)
+predator2_obs = (6,6,3)
 dim_act = 13
 n_predator1 = 10
 n_predator2 = 10
 
-batch_size = 10
+batch_size = 1
 predator1_view_range = 5
 predator2_view_range = 3
 
 
 shared = th.zeros(entire_state)
+shared.detach()
 madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state,shared)
+
+def process_array(arr):
+    # 3번째, 5번째, 7번째 차원 삭제
+    arr = np.delete(arr, [2, 4, 6], axis=2)
+
+    # 4번째와 6번째 차원을 OR 연산하여 하나로 묶기
+    combined_dim = np.logical_or(arr[:, :, 2], arr[:, :, 3])
+
+    # 결과 배열 생성 (10, 10, 3)
+    result = np.dstack((arr[:, :, :2], combined_dim))
+
+    return result
+
 
 
 for ep in range(1000):
@@ -71,7 +85,7 @@ for ep in range(1000):
 
 			#  현재 observation를 받아오기 위한 것
 			observation, reward, termination, truncation, info = env.last()
-			observation_temp = observation
+			observation_temp = process_array(observation)
 
 
 			#action을 뽑고, 그 액션으로 step을 진행한다.
@@ -82,7 +96,8 @@ for ep in range(1000):
 
 				continue
 			else:
-				action = madqn.get_action(state = observation, mask=None)
+				print("observation확인",observation.shape)
+				action = madqn.get_action(state = observation_temp, mask=None)
 				#print("이건 또 뭘까",type(action))
 				env.step(action)
 				# action = env.action_space(agent).sample()
@@ -91,7 +106,7 @@ for ep in range(1000):
 				next_observation, reward, termination, truncation, info = env.last()
 				print("이건 또 뭘까",type(next_observation))
 				print("이건 또 뭘까", type(observation)) #지금 받았을때는 넘파인데?
-				madqn.buffer.put(observation_temp, action, reward, observation, termination, truncation)
+				madqn.buffer.put(observation_temp, action, reward, process_array(next_observation), termination, truncation)
 				total_reward[idx] += reward
 
 			# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.

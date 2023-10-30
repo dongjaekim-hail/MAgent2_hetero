@@ -59,20 +59,11 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
 
 
-    # def target_update(self):  # 주기적으로 target 업데이트 함 tensorflow 수정해야함
-    #     for i in range(n_predator1 + n_predator2):
-    #         weights = self.gdqns[i].get_weights()  # behavior network에서 weight들을 가져오고
-    #         self.gdqns_targets[i].set_weights(weights)  # target model network의 weight들에 그대로 복사하는 과정
 
     def target_update(self):  # 주기적으로 target 업데이트 함 tensorflow 수정해야함
         weights = self.gdqn.get_weights()  # behavior network에서 weight들을 가져오고
         self.gdqn_target.set_weights(weights)  # target model network의 weight들에 그대로 복사하는 과정
 
-    # def get_agent_info(self, pos, range, entire_state):
-    #
-    #     self.pos = pos
-    #     self.range = range
-    #     self.entire_state = entire_state
 
     def set_agent_info(self, agent, pos, view_range):
 
@@ -109,70 +100,11 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
         extracted_area = self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range,
                          :z_range]
-        print("extracted_area", extracted_area.shape)
+        print("extracted_area(1)", extracted_area.shape)
         # 구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
 
         return extracted_area  # (887)으로 출력
 
-    def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
-
-        x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
-        y_range = int(self.view_range)
-        z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
-
-        x_start = self.pos[0] + 10
-        print("x_start", x_start)
-        y_start = self.pos[1] + 10
-        print("y_start", y_start)
-        z_start = 0
-
-
-
-        extracted_area = self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range,
-                         :z_range]
-        print("extracted_area", extracted_area.shape)
-        # 구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
-
-        return extracted_area  # (887)으로 출력
-
-
-    # def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
-    #     x_start = self.pos[0] + 10
-    #     print("x_start", x_start)
-    #     y_start = self.pos[1] + 10
-    #     print("y_start", y_start)
-    #     z_start = 0
-    #
-    #     x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
-    #     y_range = int(self.view_range)
-    #     z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
-    #
-    #     extracted_area = self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range,
-    #                      :z_range]
-    #     print("extracted_area", extracted_area.shape)
-    #     # 구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
-    #
-    #     return extracted_area  # (887)으로 출력
-
-    # def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
-    #     x_start = self.pos[0]
-    #     print("x_start",x_start)
-    #     y_start = self.pos[1]
-    #     print("y_start", y_start)
-    #     z_start = 0
-    #
-    #     x_range = int(self.view_range) #사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
-    #     y_range = int(self.view_range)
-    #     z_range= self.entire_state[2] #feature_dim 을 가져오는 것
-    #
-    #
-    #     extracted_area = self.shared[x_start-x_range:x_start + x_range, y_start - y_range : y_start + y_range,:z_range]
-    #     print("extracted_area",extracted_area.shape)
-    #     #구석에 있는 agent들이 observation을 어떻게 가지고 올지 확인하고 수정해야 할 필요 았음
-    #     # print("extracted_area", extracted_area.shape)
-    #     # print(f"Shared shape : {self.shared.shape}, Range : {x_start - x_range} ~ {x_start + x_range - 1}")
-    #
-    #     return extracted_area  # (8*8*7)으로 출력
 
     def to_guestbook(self, info):  # info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
         # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
@@ -196,48 +128,6 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         print("shared type", type(self.shared))
         print("_________________________________________")
 
-    # def to_guestbook(self, info):  # info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
-    #     # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
-    #     # shared 와 info 모두 3차원형태
-    #     print("info type", type(info))
-    #     print("shared type", type(self.shared))
-    #
-    #     x_start = self.pos[0] + 10
-    #     y_start = self.pos[1] + 10
-    #     z_start = 0
-    #
-    #     x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
-    #     y_range = int(self.view_range)
-    #     z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
-    #
-    #     self.shared[x_start - x_range:x_start + x_range, y_start - y_range: y_start + y_range, :z_range] += info
-    #
-    #     x_start_clip = max(0, min(x_start - x_range, 65))
-    #     x_end_clip = min(10, max(x_start + x_range, 45))
-    #     y_start_clip = max(0, min(y_start - y_range, 65))
-    #     y_end_clip = min(10, max(y_start + y_range, 45))
-    #
-    #     # shared 배열에서 해당 부분을 0으로 설정합니다.
-    #     self.shared[x_start_clip - x_range:x_end_clip + x_range,
-    #     y_start_clip - y_range:y_end_clip + y_range,
-    #     :z_range] = 0
-
-    # def to_guestbook(self, info): #info : gnn을 거쳐서 sigmoid취해준 결과를 곱해준 값
-    #     # 에이전트의 Pos 정보를 받아서 shared graph에 정보를 저장하는 함수, info: forward를 거쳐서 나온 기록할 정보, pos: 에이전트의 절대 위치, shared :방명록
-    #     #shared 와 info 모두 3차원형태
-    #     print("info type",type(info))
-    #     print("shared type", type(self.shared))
-    #
-    #     x_start = self.pos[0]
-    #     y_start = self.pos[1]
-    #     z_start = 0
-    #
-    #     x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10*10*7의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
-    #     y_range = int(self.view_range)
-    #     z_range = self.entire_state[2]  # feature_dim 을 가져오는 것
-    #
-    #     self.shared[x_start - x_range :x_start + x_range, y_start - y_range : y_start + y_range,:z_range] += info
-    #     #shared가 아직 빨간색인 이유 : 아직 None으로 정의가 되어 있어서 그런 것 같음
     def get_action(self, state, mask=None):
         print("________________________________________")
         print(state)
@@ -256,7 +146,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         for _ in range(10):
             book = self.from_guestbook()
             observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
-
+            #print("observation확안",observations)
             next_observations = torch.tensor(next_observations)
             observations = torch.tensor(observations)
 
@@ -264,13 +154,16 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             q_values = q_values[0][actions]
 
             next_q_values, _ = self.gdqn_target(next_observations, self.adj, book)  # next state에 대해서 target 값
-            next_q_values = max(next_q_values)  # next state에 대해서 target 값
-            print("이게 뭐냐고ㅠㅠㅠㅠ",type(next_q_values))
-            print("이게 뭐냐고ㅠㅠㅠㅠ", type(rewards))
-            print("termination정체",1-int(termination[0]))
+            print("next_q_value확인", next_q_values)
+            next_q_values = torch.max(next_q_values)  # next state에 대해서 target 값
+            print("next_q_value확인max",next_q_values)
+
             targets = int(rewards[0]) + (1 - int(termination[0])) * next_q_values * args.gamma
+            print("target형태",targets)
+            print("qvalues_형태", q_values)
             loss = self.criterion(q_values, targets)
-            loss.backward(retain_graph=True)
+            #loss.backward(retain_graph=True)
+            loss.backward()
             #loss.backward()
             self.gdqn_optimizer.step()
 

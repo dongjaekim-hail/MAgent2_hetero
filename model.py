@@ -8,9 +8,6 @@ import torch.optim as optim
 from arguments import args
 import random
 
-#sharedGNN은 전체 에이전트 클래스 들어갈 클래스의 앞부분에 넣으면 될 듯. 그 클래스를 total 이라고 하자.
-#total 안에 action select 하는 부분 넣고, DQN 업데이트 하는 부분도 있어야 할 듯! state 가 들어가서 쭉쭉 들어가서 마지막에 loss 하나만 나오는 거라서 네트워크를 하나로 묶어야 할 것 같고, 이 모델안에 action 선택하는거 있어야 겠는데
-#train 하는 것도 있어야함
 class G_DQN(nn.Module):
     def __init__(self,  dim_act, observation_state):
         super(G_DQN, self).__init__()
@@ -31,13 +28,8 @@ class G_DQN(nn.Module):
         self.FC2 = nn.Linear(128, dim_act)
         self.relu = nn.ReLU(inplace=True)
 
-        #self.criterion = nn.MSELoss()
-        #self.optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.l2)
 
-    # shared_graph는 MADQN class 위에 선언될 shared graph 인스턴스를 객체로 받아, 그 객체에 정보를 저장하고, 그것으로부터 정보를 가져오도록 구성한다.
     def forward(self, state, adj, info): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고
-        #torch.autograd.set_detect_anomaly(True)
-        #state = torch.from_numpy(state).float() #densesageConv는 'numpy.ndarray'으로는 작동하지 않기 때문에 그냥 tensor으로 변경해야 한다.
 
         if isinstance(state, np.ndarray):
             state = torch.tensor(state).float()
@@ -47,16 +39,11 @@ class G_DQN(nn.Module):
         print("state뭔데?",state.shape)
         #state = state.squeeze()
 
-        x = state.reshape(-1, self.dim_feature) #(10*10*7)를 (100*7)으로 변경하여 그래프의 featur metrix으로 바꾸어주는 역활!
-        # print("x1",x.shape)
-        # print("ㅠㅠㅠ",type(x))
-        # print("ㅠㅠㅠ", type(adj))
+        x = state.reshape(-1, self.dim_feature) #(10*10*3)를 (100*3)으로 변경하여 그래프의 featur metrix으로 바꾸어주는 역활!
         x = self.gnn1(x,adj) #노드끼리 fully connective 되어 있다는 가정아래!gnn어차피 fully connective 여서 mask 인자 없애버림
         x = self.gnn2(x,adj)
         x = F.elu(x)  # exponential linear unit
-        #print("x2",x.shape)
         x = x.squeeze() #squeeze 를 하는 이유: x가 batch_size를 고려해서 받을 수 있도록 설계 됐기 때문에 1*100*14꼴로 나옴->100*14으로 바꿔주기 위함
-        #print("X3",x.shape)
 
         dqn = x[:, :self.dim_feature]  #   100*7 : 위의 x중 절반은 dqn 으로 들어가고 나머지 절반은 sigmoid취해서 가져갈 것만 기록하도록 한다.
         print("dqn",dqn.shape)
@@ -66,8 +53,6 @@ class G_DQN(nn.Module):
         shared = shared.reshape(self.observation_state) #다시 10*10*5 꼴로 만들어주어야 함-> 이를 shared graph 에 넘겨주어야 한다.
 
 
-        #shared_graph 으로부터 정보를 가져와서 나의 정보와 concat 해야 한다.  10*10*7 과 10*10*7 을 concat 해야 한다.
-        #input = np.concatenate((shared, info), axis=0)#16*8*7 일 거고 #forward문은 나중에 grad 구할때 numpy 형태는 지원하지 않음
         input = torch.cat((shared, info), dim=0) #현재 info가 5*5*7 이라서 concatenate이 안됨->수정함
         print("info", info.shape)
         print("shared", shared.shape)
@@ -78,12 +63,10 @@ class G_DQN(nn.Module):
         x = self.FC1(x)
         x = self.FC2(x)
 
-        #print(type(dqn)) #torch.tensor
         return x, shared #shared_graph에 넣는건 밖에서 진행하자.
-        #torch.autograd.set_detect_anomaly(False)
 
 
-    #업데이트 하는 부분이랑, 옵티마시져랑 loss 를 기록해 놓아야 할 거 같은데
+
 
 class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초에 history를 저장해서 그로부터 하나씩 가져와서 학습을 진행시킨다. 수정필요!
    def __init__(self, capacity=10000):
@@ -100,8 +83,6 @@ class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초
        sample = random.sample(self.buffer, 1)  # batch size만큼 buffer에서 가져온다.
 
        observation, action, reward, next_observation, termination, truncation = zip(*sample)
-       # states = np.array(observation).reshape(args.batch_size, -1)
-       # next_observation = np.array(next_observation).reshape(args.batch_size, -1)
        return observation, action, reward, next_observation, termination, truncation  # buffer에서 데이터 받아서 반환하는 과정을 거침
 
    def size(self):
