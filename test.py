@@ -27,6 +27,9 @@ predator2_obs = (6,6,3)
 dim_act = 13
 n_predator1 = 10
 n_predator2 = 10
+predator1_adj = (100,100)
+predator2_adj = (36,36)
+
 
 batch_size = 1
 predator1_view_range = 5
@@ -34,7 +37,6 @@ predator2_view_range = 3
 
 
 shared = th.zeros(entire_state)
-shared.detach()
 madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state,shared)
 
 def process_array(arr):
@@ -58,11 +60,13 @@ for ep in range(1000):
 	total_reward = {i:0 for i in range(n_predator1+n_predator2)}
 
 
-
-
 	for agent in env.agent_iter():
 
+		# print("agent iteration",agent)
+		#agent= agent
+
 		if agent[:8] == "predator": #predator 일때만 밑의 식이 실행되어야 함
+
 			#잡단에 있는 predator들의 절대 좌표
 			handles = env.env.env.env.env.get_handles()
 			pos_predator1 = env.env.env.env.env.get_pos(handles[0])
@@ -104,7 +108,9 @@ for ep in range(1000):
 				total_reward[idx] += reward
 
 			# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.
-			if madqn.buffer.size() >= args.batch_size:
+			#if madqn.buffer.size() >= args.batch_size:
+			if madqn.buffer.size() >= 1:
+				print("first replay")
 				madqn.replay()
 				madqn.target_update()
 				print('EP{} EpisodeReward={}'.format(ep, total_reward[idx]))
@@ -112,6 +118,7 @@ for ep in range(1000):
 
 
 		else: #prey들은 별도의 절차없이 action 을 선택하고 step을 진행해 나간다.
+			print("chekc 먹어")
 			action = env.action_space(agent).sample()
 			env.step(action)
 

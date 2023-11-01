@@ -39,6 +39,7 @@ class G_DQN(nn.Module):
 
 
         x = state.reshape(-1, self.dim_feature) #(10*10*3)를 (100*3)으로 변경하여 그래프의 featur metrix으로 바꾸어주는 역활!
+        #print("이거 확인해보자",a)
         x = self.gnn1(x,adj) #노드끼리 fully connective 되어 있다는 가정아래!gnn어차피 fully connective 여서 mask 인자 없애버림
         x = self.gnn2(x,adj)
         x = F.elu(x)  # exponential linear unit

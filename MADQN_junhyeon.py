@@ -6,9 +6,9 @@ import torch.nn as nn
 from torch.optim import Adam
 from arguments import args
 
-entire_state = (45, 45, 7)
-predator1_obs = (10, 10, 7)
-predator2_obs = (6, 6, 7)
+entire_state = (65, 65, 3)
+predator1_obs = (10, 10, 3)
+predator2_obs = (6, 6, 3)
 dim_act = 13
 n_predator1 = 10
 n_predator2 = 10
@@ -16,7 +16,7 @@ eps_decay = 0.1
 batch_size = 10
 predator1_adj = (100,100)
 predator2_adj = (36,36)
-agent = None
+#agent = None
 
 
 
@@ -128,6 +128,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
     def get_action(self, state, mask=None):
         book = self.from_guestbook() #self.pos에 기록된 값을 참고하여 shared graph에서 정보를 가져오는데,,,여기서 문제가 발생한다.
         q_value, shared_info = self.gdqn(state, self.adj, book) #shared_info : shared graph에 넘겨주어야 할 정보들
+        print("self.adj",self.adj.shape)
         self.to_guestbook(shared_info) #shared_graph에 받아온 정보를 넘겨준다.
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
         self.epsilon = max(self.epsilon, args.eps_min)  # 그리고 args_eps 값의 최소값으로 정해진 것보다는 크도록 설정
@@ -145,12 +146,22 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             next_observations = torch.tensor(next_observations)
             observations = torch.tensor(observations)
 
+            next_observations = next_observations.reshape(-1,3)
+            observations = observations.reshape(-1,3)
+
+
+            print("observation확인", observations.unsqueeze(0).shape)
+
             self.gdqn_optimizer.zero_grad()
 
-            q_values, _ = self.gdqn(observations, self.adj, book.detach())# 실제로 observation에서의 q 값
+            q_values, _ = self.gdqn(observations.unsqueeze(0), (self.adj).unsqueeze(0), book.detach())# 실제로 observation에서의 q 값
+            print(q_values)
             q_values = q_values[0][actions]
+            print("self.adj확인", (self.adj).shape)
+            print("self.adj확인",(self.adj).unsqueeze(0).shape)
+            #아 adj 를 unsqueeze 를 해야하는것 같다. 그래서 36*36 을 1*36*36 으로 해주어야 densesageconv를 할 수 있는 것 같다.
 
-            next_q_values, _ = self.gdqn_target(next_observations, self.adj, book)  # next state에 대해서 target 값
+            next_q_values, _ = self.gdqn_target(next_observations.unsqueeze(0), (self.adj).unsqueeze(0), book)  # next state에 대해서 target 값
 
             next_q_values = torch.max(next_q_values)  # next state에 대해서 target 값
 
