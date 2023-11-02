@@ -75,10 +75,12 @@ for ep in range(1000):
 			#에이전트 자신에게 맞는 pos 가져오는 부분
 			if agent[9] == "1":  # 1번째 predator 집단
 				idx = int(agent[11:])
+				print("에이전트idx#################################################################",idx)
 				pos = pos_predator1[idx]
 				view_range = predator1_view_range
 			else:				# 2번째 predator 집단
 				idx = int(agent[11:])
+				print("에이전트idx#################################################################",idx)
 				pos = pos_predator2[idx]
 				view_range = predator2_view_range
 
@@ -88,7 +90,8 @@ for ep in range(1000):
 		
 
 			#  현재 observation를 받아오기 위한 것
-			observation, reward, termination, truncation, info = env.last()
+			observation, reward, termination, truncation, info,agent = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
+			print(" 첫번째 last 가 반환하는 agent 의 정보",agent)
 			observation_temp = process_array(observation)
 
 
@@ -103,8 +106,11 @@ for ep in range(1000):
 
 				action = madqn.get_action(state = observation_temp, mask=None)
 				env.step(action)
-				next_observation, reward, termination, truncation, info = env.last()
+				next_observation, reward, termination, truncation, info, agent = env.last()
+				print(" 두번째 last 가 반환하는 agent 의 정보", agent)
 				madqn.buffer.put(observation_temp, action, reward, process_array(next_observation), termination, truncation)
+				print("observation_temp.shape 확인",observation_temp.shape)
+				print("process_array(next_observation)",process_array(next_observation).shape)
 				total_reward[idx] += reward
 
 			# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.
@@ -118,7 +124,7 @@ for ep in range(1000):
 
 
 		else: #prey들은 별도의 절차없이 action 을 선택하고 step을 진행해 나간다.
-			print("chekc 먹어")
+
 			action = env.action_space(agent).sample()
 			env.step(action)
 

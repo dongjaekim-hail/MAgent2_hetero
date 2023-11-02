@@ -13,7 +13,7 @@ dim_act = 13
 n_predator1 = 10
 n_predator2 = 10
 eps_decay = 0.1
-batch_size = 10
+#batch_size = 10
 predator1_adj = (100,100)
 predator2_adj = (36,36)
 #agent = None
@@ -36,6 +36,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             G_DQN(self.dim_act, self.predator2_obs) for _ in range(self.n_predator2)]
         self.gdqn_targets = [G_DQN(self.dim_act, self.predator1_obs) for _ in range(self.n_predator1)] + [
             G_DQN(self.dim_act, self.predator2_obs) for _ in range(self.n_predator2)]  # 학습의 안정을 위해 target dqn 설정
+        print(len(self.gdqn_targets))
+        print(self.gdqn_targets)
         self.buffers = [ReplayBuffer() for _ in range(self.n_predator1 + self.n_predator2)]
         self.gdqn_optimizers = [Adam(x.parameters(), lr=0.001) for x in self.gdqns]
         #self.target_optimizer = [Adam(x.parameters(), lr=0.001) for x in self.gdqns_target] #이게 필요하지는 않지 어차피 weight받아와서 업데이트 하는건데
@@ -69,6 +71,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
         if agent[9] == "1": #1번째 predator 집단
             self.idx = int(agent[11:])
+            print("self.idx predator1확인############################################",self.idx)
             self.adj = torch.ones(predator1_adj)
 
             self.pos = pos
@@ -76,6 +79,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
         else:               #2번째 predator 집단
             self.idx = int(agent[11:]) + n_predator1
+            print("self.idx predator2확인############################################", self.idx)
             self.adj = torch.ones(predator2_adj)
 
             self.pos = pos
@@ -89,9 +93,9 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
     def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
         x_start = self.pos[0] + 10
-        print("x_start", x_start)
+
         y_start = self.pos[1] + 10
-        print("y_start", y_start)
+
         z_start = 0
 
         x_range = int(self.view_range)  # 사실 view_range=5라고 했을 때, 10107의 obs를 얻는데, agent의 좌표가 정중앙인가...?에 하는 의심 일단 믿어.ㅠㅠ
@@ -128,7 +132,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
     def get_action(self, state, mask=None):
         book = self.from_guestbook() #self.pos에 기록된 값을 참고하여 shared graph에서 정보를 가져오는데,,,여기서 문제가 발생한다.
         q_value, shared_info = self.gdqn(state, self.adj, book) #shared_info : shared graph에 넘겨주어야 할 정보들
-        print("self.adj",self.adj.shape)
+
         self.to_guestbook(shared_info) #shared_graph에 받아온 정보를 넘겨준다.
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
         self.epsilon = max(self.epsilon, args.eps_min)  # 그리고 args_eps 값의 최소값으로 정해진 것보다는 크도록 설정
@@ -142,7 +146,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         for _ in range(10):
             book = self.from_guestbook()
             observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
-            #print("observation확안",observations)
+
             next_observations = torch.tensor(next_observations)
             observations = torch.tensor(observations)
 
@@ -150,15 +154,15 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             observations = observations.reshape(-1,3)
 
 
-            print("observation확인", observations.unsqueeze(0).shape)
+
 
             self.gdqn_optimizer.zero_grad()
 
             q_values, _ = self.gdqn(observations.unsqueeze(0), (self.adj).unsqueeze(0), book.detach())# 실제로 observation에서의 q 값
-            print(q_values)
+
             q_values = q_values[0][actions]
-            print("self.adj확인", (self.adj).shape)
-            print("self.adj확인",(self.adj).unsqueeze(0).shape)
+
+
             #아 adj 를 unsqueeze 를 해야하는것 같다. 그래서 36*36 을 1*36*36 으로 해주어야 densesageconv를 할 수 있는 것 같다.
 
             next_q_values, _ = self.gdqn_target(next_observations.unsqueeze(0), (self.adj).unsqueeze(0), book)  # next state에 대해서 target 값

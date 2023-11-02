@@ -74,18 +74,20 @@ render에 get banner함수에서 집단이 3개일때는 정의가 안되어 잇
 
 def _compute_terminates(self, step_done): 이건?
 """
-
-
-import torch
-
-# 기존 텐서 생성
-x = torch.tensor([[1, 2, 3],
-                  [4, 5, 6]])
-
-# view() 메서드를 사용하여 모양 변경
-x = x.view(3, 2)  # x의 모양을 (3, 2)로 변경
-
-# 또는 reshape() 메서드를 사용하여 모양 변경
-#x = x.reshape(2, 3)  # x의 모양을 (2, 3)으로 변경
-
-print(x)
+#
+#
+# import torch
+#
+# # 기존 텐서 생성
+# x = torch.tensor([[1, 2, 3],
+#                   [4, 5, 6]])
+#
+# # view() 메서드를 사용하여 모양 변경
+# x = x.view(3, 2)  # x의 모양을 (3, 2)로 변경
+#
+# # 또는 reshape() 메서드를 사용하여 모양 변경
+# #x = x.reshape(2, 3)  # x의 모양을 (2, 3)으로 변경
+#
+# print(x)
+map_size= 45
+print(map_size * map_size * 0.005)
