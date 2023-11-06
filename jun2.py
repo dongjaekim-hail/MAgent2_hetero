@@ -89,5 +89,131 @@ def _compute_terminates(self, step_done): 이건?
 # #x = x.reshape(2, 3)  # x의 모양을 (2, 3)으로 변경
 #
 # print(x)
-map_size= 45
-print(map_size * map_size * 0.005)
+#
+
+import torch as th
+# num_agents= 20
+# observations = [None] * num_agents  # 에이전트 수만큼 None으로 초기화된 리스트 생성
+#
+# print(observations)
+#
+#
+# entire_state = (10,3)
+# #에이전트 0의 observation을 저장
+# observations[0] = th.zeros(entire_state)
+# observations[0].append(th.zeros(entire_state))
+#
+# # 에이전트 1의 observation을 저장
+# observations[1] = th.zeros(entire_state)
+#
+# print(observations)
+#
+# # 에이전트 0의 observation을 얻기
+# #agent0_observation = observations[0]
+
+
+# import torch as th
+#
+# num_agents = 20
+# num_steps = 100  # 예를 들어, 100개의 step에 대한 에이전트 observation 저장
+#
+# # 에이전트 수와 스텝 수를 고려한 3D Tensor를 초기화합니다.
+# observations = th.zeros((num_agents, num_steps, 10, 10, 3))
+# print(observations.shape)
+#
+# # 각 스텝에서 에이전트 observation을 업데이트합니다.
+# for step in range(num_steps):
+#     # 각 에이전트로부터 observation을 받아서 업데이트합니다.
+#     for agent_idx in range(num_agents):
+#         # 에이전트로부터 observation을 받는 로직 (예: 환경에서 observation을 받아오는 부분)
+#         agent_observation = th.randn(10, 10, 3)  # 임의의 예시 데이터
+#
+#         # 에이전트의 observation을 저장합니다.
+#         observations[agent_idx, step] = agent_observation
+#
+# # 예시로 첫 번째 에이전트의 첫 번째 스텝의 observation을 출력합니다.
+#
+#
+# print(observations[0, 0])
+
+
+# import torch as th
+#
+# num_agents = 20
+# num_steps = 100  # 예를 들어, 100개의 step에 대한 에이전트 observation 저장
+#
+# # 딕셔너리 초기화
+# observations_dict = {}
+#
+# # 각 에이전트에 대한 딕셔너리 초기화
+# for agent_idx in range(num_agents):
+#     agent_key = f"agent_{agent_idx}"
+#     observations_dict[agent_key] = []
+#
+# # 각 스텝에서 에이전트 observation을 업데이트합니다.
+# for step in range(num_steps):
+#     # 각 에이전트로부터 observation을 받아서 업데이트합니다.
+#     for agent_idx in range(num_agents):
+#         agent_key = f"agent_{agent_idx}"
+#
+#         # 에이전트로부터 observation을 받는 로직 (예: 환경에서 observation을 받아오는 부분)
+#         agent_observation = th.randn(3*4)  # 임의의 예시 데이터
+#
+#         # 에이전트의 observation을 해당 키에 저장합니다.
+#         observations_dict[agent_key].append(agent_observation)
+#
+# # 예시로 첫 번째 에이전트의 첫 번째 스텝의 observation을 출력합니다.
+# first_agent_key = "agent_0"
+# print(observations_dict[first_agent_key][0])
+
+#
+# import torch as th
+#
+# num_agents = 20
+# num_steps = 100  # 예를 들어, 100개의 step에 대한 에이전트 observation 저장
+#
+# # 딕셔너리 초기화
+# observations_dict = {}
+#
+# # 각 에이전트에 대한 딕셔너리 초기화
+# for agent_idx in range(num_agents):
+#     agent_key = f"agent_{agent_idx}"
+#     observations_dict[agent_key] = []
+#
+# # 각 스텝에서 에이전트 observation을 업데이트합니다.
+# for step in range(num_steps):
+#     # 각 에이전트로부터 observation을 받아서 업데이트합니다.
+#     for agent_idx in range(num_agents):
+#         agent_key = f"agent_{agent_idx}"
+#
+#         # 에이전트로부터 observation을 받는 로직 (예: 환경에서 observation을 받아오는 부분)
+#         agent_observation = th.randn((3,4))  # 임의의 예시 데이터
+#
+#         # 에이전트의 observation을 해당 키에 저장합니다.
+#         observations_dict[agent_key].append(agent_observation)
+#
+# # 예시로 첫 번째 에이전트의 첫 번째 스텝의 observation을 출력합니다.
+#
+# first_agent_key = "agent_0"
+# print(observations_dict[first_agent_key][3].shape)
+
+# reward_dict 예시 (20개의 키-값 쌍)
+reward_dict = {
+    'agent_0': [1, 2, 3, 4, 5],
+    'agent_1': [2, 3, 4, 5, 6],
+    # 나머지 18개 에이전트의 데이터도 포함
+}
+
+# 각 리스트의 마지막 값을 더할 변수 초기화
+total_last_rewards = 0
+
+# 각 리스트의 마지막 값을 더하기
+for agent_rewards in reward_dict.values():
+    print(agent_rewards)
+    if len(agent_rewards) > 0:
+        last_reward = agent_rewards[-1]
+        total_last_rewards += last_reward
+
+# 각 리스트의 마지막 값들을 더한 결과 출력
+print("각 리스트의 마지막 값들을 더한 결과:", total_last_rewards)
+

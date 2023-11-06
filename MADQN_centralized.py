@@ -142,7 +142,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         return torch.argmax(q_value).item()
         #return np.argmax(q_value)  # 만약 그게 아니라면, q_value 증 가장 크게 하는 인덱스의 값을 추출한다.
 
-    def replay(self):
+    def replay(self): #배치사이즈 살려야 할 것 같은데....나중에 unsqueeze 없애야함
         for _ in range(10):
             book = self.from_guestbook()
             observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
@@ -153,20 +153,13 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             next_observations = next_observations.reshape(-1,3)
             observations = observations.reshape(-1,3)
 
-
-
-
             self.gdqn_optimizer.zero_grad()
 
             q_values, _ = self.gdqn(observations.unsqueeze(0), (self.adj).unsqueeze(0), book.detach())# 실제로 observation에서의 q 값
-
             q_values = q_values[0][actions]
-
-
-            #아 adj 를 unsqueeze 를 해야하는것 같다. 그래서 36*36 을 1*36*36 으로 해주어야 densesageconv를 할 수 있는 것 같다.
+#아 adj 를 unsqueeze 를 해야하는것 같다. 그래서 36*36 을 1*36*36 으로 해주어야 densesageconv를 할 수 있는 것 같다.
 
             next_q_values, _ = self.gdqn_target(next_observations.unsqueeze(0), (self.adj).unsqueeze(0), book)  # next state에 대해서 target 값
-
             next_q_values = torch.max(next_q_values)  # next state에 대해서 target 값
 
             targets = int(rewards[0]) + (1 - int(termination[0])) * next_q_values * args.gamma
