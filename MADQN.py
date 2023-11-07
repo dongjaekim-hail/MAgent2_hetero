@@ -36,8 +36,6 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             G_DQN(self.dim_act, self.predator2_obs) for _ in range(self.n_predator2)]
         self.gdqn_targets = [G_DQN(self.dim_act, self.predator1_obs) for _ in range(self.n_predator1)] + [
             G_DQN(self.dim_act, self.predator2_obs) for _ in range(self.n_predator2)]  # 학습의 안정을 위해 target dqn 설정
-        print(len(self.gdqn_targets))
-        print(self.gdqn_targets)
         self.buffers = [ReplayBuffer() for _ in range(self.n_predator1 + self.n_predator2)]
         self.gdqn_optimizers = [Adam(x.parameters(), lr=0.001) for x in self.gdqns]
         #self.target_optimizer = [Adam(x.parameters(), lr=0.001) for x in self.gdqns_target] #이게 필요하지는 않지 어차피 weight받아와서 업데이트 하는건데
@@ -71,7 +69,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
         if agent[9] == "1": #1번째 predator 집단
             self.idx = int(agent[11:])
-            print("self.idx predator1확인############################################",self.idx)
+            #print("self.idx predator1확인############################################",self.idx)
             self.adj = torch.ones(predator1_adj)
 
             self.pos = pos
@@ -79,7 +77,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
         else:               #2번째 predator 집단
             self.idx = int(agent[11:]) + n_predator1
-            print("self.idx predator2확인############################################", self.idx)
+            #print("self.idx predator2확인############################################", self.idx)
             self.adj = torch.ones(predator2_adj)
 
             self.pos = pos

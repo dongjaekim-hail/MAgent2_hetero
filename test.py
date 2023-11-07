@@ -64,11 +64,11 @@ for ep in range(1000):
 	for agent_idx in range(n_predator1 + n_predator2):
 		observations_dict[agent_idx] = []
 
-	# next_observation 딕셔너리 초기화
-	next_observations_dict = {}
-	# 각 에이전트에 대한 딕셔너리 초기화
-	for agent_idx in range(n_predator1 + n_predator2):
-		next_observations_dict[agent_idx] = []
+	# # next_observation 딕셔너리 초기화
+	# next_observations_dict = {}
+	# # 각 에이전트에 대한 딕셔너리 초기화
+	# for agent_idx in range(n_predator1 + n_predator2):
+	# 	next_observations_dict[agent_idx] = []
 
 	# reward 딕셔너리 초기화
 	reward_dict = {}
@@ -76,20 +76,26 @@ for ep in range(1000):
 	for agent_idx in range(n_predator1 + n_predator2):
 		reward_dict[agent_idx] = []
 
-	# reward 딕셔너리 초기화
+	# action 딕셔너리 초기화
 	action_dict = {}
 	# 각 에이전트에 대한 딕셔너리 초기화
 	for agent_idx in range(n_predator1 + n_predator2):
 		action_dict[agent_idx] = []
 
-	# reward 딕셔너리 초기화
+	# termination 딕셔너리 초기화
 	termination_dict = {}
 	# 각 에이전트에 대한 딕셔너리 초기화
 	for agent_idx in range(n_predator1 + n_predator2):
 		termination_dict[agent_idx] = []
 
+	#truncation 초기화
+	truncation_dict = {}
+	# 각 에이전트에 대한 딕셔너리 초기화
+	for agent_idx in range(n_predator1 + n_predator2):
+		truncation_dict[agent_idx] = []
 
-	step = 0
+
+	iteration_number = 0
 
 
 	##########################################################################
@@ -97,118 +103,143 @@ for ep in range(1000):
 	##########################################################################
 
 
-	for agent in env.agent_iter(): #현재의 observation, action ,reward 를 받아오기 위한 for문
+	for agent in env.agent_iter():
+		if iteration_number // (n_predator1 + n_predator2 + n_prey) == 0:   #첫번째 step
 
-		if agent[:8] == "predator": #predator 일때만 밑의 식이 실행되어야 함
+			print("iteration",(iteration_number // (n_predator1 + n_predator2 + n_prey)) % 2)
+			print("iteration_numbber",iteration_number)
 
-			#잡단에 있는 predator들의 절대 좌표
-			handles = env.env.env.env.env.get_handles()
-			pos_predator1 = env.env.env.env.env.get_pos(handles[0])
-			pos_predator2 = env.env.env.env.env.get_pos(handles[1])
+			if agent[:8] == "predator": #predator 일때만 밑의 식이 실행되어야 함
 
-			#에이전트 자신에게 맞는 pos 가져오는 부분
-			if agent[9] == "1":  # 1번째 predator 집단
-				idx = int(agent[11:])
-				print("에이전트idx#################################################################",idx)
-				pos = pos_predator1[idx]
-				view_range = predator1_view_range
-			else:				# 2번째 predator 집단
-				idx = int(agent[11:])
-				print("에이전트idx#################################################################",idx)
-				pos = pos_predator2[idx]
-				view_range = predator2_view_range
+				#잡단에 있는 predator들의 절대 좌표
+				handles = env.env.env.env.env.get_handles()
+				pos_predator1 = env.env.env.env.env.get_pos(handles[0])
+				pos_predator2 = env.env.env.env.env.get_pos(handles[1])
 
-			# 이 함수를 통해 현재 돌고 있는 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
-			madqn.set_agent_info(agent, pos, view_range)
+				#에이전트 자신에게 맞는 pos 가져오는 부분
+				if agent[9] == "1":  # 1번째 predator 집단
+					idx = int(agent[11:])
+					#print("에이전트idx#################################################################",idx)
+					pos = pos_predator1[idx]
+					view_range = predator1_view_range
+				else:				# 2번째 predator 집단
+					idx = int(agent[11:]) + n_predator1
+					#print("에이전트idx#################################################################",idx)
+					pos = pos_predator2[idx - n_predator1]
+					view_range = predator2_view_range
 
+				print(idx,":idx")
 
-
-			#  현재 observation를 받아오기 위한 것
-			observation, reward, termination, truncation, info,agent = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
-			print(" 첫번째 last 가 반환하는 agent 의 정보",agent)
-			observation_temp = process_array(observation)
-			action = madqn.get_action(state=observation_temp, mask=None)
-			env.step(action)
-
-			observations_dict[idx].append(observation_temp)
-			action_dict[idx].append(action)
-			reward_dict[idx].append(reward)
-
-		#action을 뽑고, 그 액션으로 step을 진행한다.
-
-		else: #prey들은 별도의 절차없이 action 을 선택하고 step을 진행해 나간다.
-
-			action = env.action_space(agent).sample()
-			env.step(action)
+				# 이 함수를 통해 현재 돌고 있는 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
+				madqn.set_agent_info(agent, pos, view_range)
 
 
-	for agent in env.agent_iter(): #next_observation 가져오고, target 계산해서 업데이트 하는 부분을 위한 for문
 
-		if agent[:8] == "predator":  # predator 일때만 밑의 식이 실행되어야 함
+				#  현재 observation를 받아오기 위한 것
+				observation, reward, termination, truncation, info, agent = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
+				#print(" 첫번째 last 가 반환하는 agent 의 정보",agent)
+				observation_temp = process_array(observation)
+				action = madqn.get_action(state=observation_temp, mask=None)
+				env.step(action)
 
-			# 잡단에 있는 predator들의 절대 좌표
-			handles = env.env.env.env.env.get_handles()
-			pos_predator1 = env.env.env.env.env.get_pos(handles[0])
-			pos_predator2 = env.env.env.env.env.get_pos(handles[1])
+				observations_dict[idx].append(observation_temp)
+				action_dict[idx].append(action) #굳이 action 은 저장하지 않아도 됨!
+				reward_dict[idx].append(reward)
+				termination_dict[idx].append(termination)
+				truncation_dict[idx].append(truncation)
 
-			# 에이전트 자신에게 맞는 pos 가져오는 부분
-			if agent[9] == "1":  # 1번째 predator 집단
-				idx = int(agent[11:])
-				print("에이전트idx#################################################################", idx)
-				pos = pos_predator1[idx]
-				view_range = predator1_view_range
-			else:  # 2번째 predator 집단
-				idx = int(agent[11:])
-				print("에이전트idx#################################################################", idx)
-				pos = pos_predator2[idx]
-				view_range = predator2_view_range
 
-			# 이 함수를 통해 현재 돌고 있는 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
-			madqn.set_agent_info(agent, pos, view_range)
 
-			#  현재 observation를 받아오기 위한 것
-			next_observation, _, termination, truncation, _, agent = env.last()  # 애초에 reward가 누적보상값이네 이거 수정이 필요하다.
-			print(" 첫번째 last 가 반환하는 agent 의 정보", agent)
-			next_observation_temp = process_array(next_observation)
-			next_observations_dict[idx].append(next_observation_temp)
-			termination_dict[idx].append(termination)
+			else: #prey들은 별도의 절차없이 action 을 선택하고 step을 진행해 나간다.
 
-			if termination or truncation: #이 환경은 termination=TRUE 가 될 수가 없는 환경임.
-				print(agent, ' is terminated')
-				env.step(None)  # need this
+				action = env.action_space(agent).sample()
+				env.step(action)
 
-				continue
-			else:
-				madqn.buffer.put(observations_dict[idx][step], action_dict[idx][step], reward_dict[idx][step], next_observations_dict[idx][step], termination_dict[idx][step])
+		else: #두번째 step 이후
 
-			# 각 리스트의 마지막 값을 더할 변수 초기화
-			total_last_rewards = 0
+			step_idx= iteration_number // 30
+			print(step_idx,":step_idx")
 
-			# 각 리스트의 마지막 값을 더하기
-			for agent_rewards in reward_dict.values():
-				print(agent_rewards)
-				if len(agent_rewards) > 0:
-					last_reward = agent_rewards[-1]
-					total_last_rewards += last_reward
+			if agent[:8] == "predator":  # predator 일때만 밑의 식이 실행되어야 함
 
-			# 각 리스트의 마지막 값들을 더한 결과 출력
-			print("predator팀의 전체 reward", total_last_rewards)
+				# 잡단에 있는 predator들의 절대 좌표
+				handles = env.env.env.env.env.get_handles()
+				pos_predator1 = env.env.env.env.env.get_pos(handles[0])
+				pos_predator2 = env.env.env.env.env.get_pos(handles[1])
 
-			# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.
-			# if madqn.buffer.size() >= args.batch_size:
-			if madqn.buffer.size() >= 10:
-				print("first replay")
-				madqn.replay()
-				madqn.target_update()
-				print('EP{} EpisodeReward={}'.format(ep, [idx]))
-		# reward의 위치가 여기가 많나...맞는 듯!
+				# 에이전트 자신에게 맞는 pos 가져오는 부분
+				if agent[9] == "1":  # 1번째 predator 집단
+					idx = int(agent[11:])
+					#print("에이전트idx#################################################################", idx)
+					pos = pos_predator1[idx]
+					view_range = predator1_view_range
+				else:  # 2번째 predator 집단
+					idx = int(agent[11:]) + n_predator1
+					#print("에이전트idx#################################################################", idx)
+					pos = pos_predator2[idx - n_predator1]
+					view_range = predator2_view_range
 
-		else:  # prey들은 별도의 절차없이 action 을 선택하고 step을 진행해 나간다.
+				print(idx, ":idx")
 
-			action = env.action_space(agent).sample()
-			env.step(action)
+				# 이 함수를 통해 현재 돌고 있는 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
+				madqn.set_agent_info(agent, pos, view_range)
 
-		step += 1
+				#  현재 observation를 받아오기 위한 것
+				observation, reward, termination, truncation, info, agent = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
+				#print(" 첫번째 last 가 반환하는 agent 의 정보", agent)
+				observation_temp = process_array(observation)
+
+				if termination or truncation:
+					print(agent , 'is terminated')
+					env.step(None)
+					continue
+
+				else:
+					action = madqn.get_action(state=observation_temp, mask=None)
+					env.step(action)
+
+					observations_dict[idx].append(observation_temp)
+					action_dict[idx].append(action)  # 굳이 action 은 저장하지 않아도 됨!
+					reward_dict[idx].append(reward)
+					termination_dict[idx].append(termination)
+					truncation_dict[idx].append(truncation)
+
+					print(len(observations_dict[idx]))
+					print(len(action_dict[idx]))
+					print(len(reward_dict[idx]))
+					print(len(termination_dict[idx]))
+					print(len(truncation_dict[idx]))
+					madqn.buffer.put(observations_dict[idx][step_idx-1], action_dict[idx][step_idx], reward_dict[idx][step_idx]-reward_dict[idx][step_idx-1],
+									 observations_dict[idx][step_idx], termination_dict[idx][step_idx], truncation_dict[idx][step_idx])
+
+				# 어차피 reward_dict의 각 에이전트의 리스트에 담겨있는 reward 값을 누적보상값이므로, 각각의 에이전트의 reward 리스트 마지막것들만 더하면 predator의 총 reward 값이다.
+				total_last_rewards = 0
+
+				# 각 리스트의 마지막 값을 더하기
+				for agent_rewards in reward_dict.values():
+					#print(agent_rewards)
+					if len(agent_rewards) > 0:
+						last_reward = agent_rewards[-1]
+						total_last_rewards += last_reward
+
+				# 각 리스트의 마지막 값들을 더한 결과 출력
+				print("predator팀의 전체 reward", total_last_rewards)
+
+				# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.
+				# if madqn.buffer.size() >= args.batch_size:
+				if madqn.buffer.size() >= 10:
+					print("first replay")
+					madqn.replay()
+					madqn.target_update()
+					print('EP{} EpisodeReward={}'.format(ep, [idx]))
+			# reward의 위치가 여기가 많나...맞는 듯!
+
+			else:  # prey들은 별도의 절차없이 action 을 선택하고 step을 진행해 나간다.
+
+				action = env.action_space(agent).sample()
+				env.step(action)
+
+		iteration_number += 1
 
 # env.state() # receives the entire state
 

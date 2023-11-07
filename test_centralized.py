@@ -38,7 +38,7 @@ predator2_view_range = 3
 
 
 shared = th.zeros(entire_state)
-madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state,shared)
+madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act )
 
 def process_array(arr):
     # 3번째, 5번째, 7번째 차원 삭제
@@ -97,29 +97,31 @@ for ep in range(1000):
 	##########################################################################
 
 
-	for agent in env.agent_iter(): #현재의 observation, action ,reward 를 받아오기 위한 for문
+	for agent in env.agent_iter(): #현재의 observation, action ,reward 를 받아오기 위한 for문- predator 20개에 대한 (obs,reward, action) 이 저장될 것
 
 		if agent[:8] == "predator": #predator 일때만 밑의 식이 실행되어야 함
 
 			#잡단에 있는 predator들의 절대 좌표
-			handles = env.env.env.env.env.get_handles()
-			pos_predator1 = env.env.env.env.env.get_pos(handles[0])
-			pos_predator2 = env.env.env.env.env.get_pos(handles[1])
+			# handles = env.env.env.env.env.get_handles()
+			# pos_predator1 = env.env.env.env.env.get_pos(handles[0])
+			# pos_predator2 = env.env.env.env.env.get_pos(handles[1])
 
 			#에이전트 자신에게 맞는 pos 가져오는 부분
 			if agent[9] == "1":  # 1번째 predator 집단
-				idx = int(agent[11:])
+				idx = 0
+				#idx = int(agent[11:])
 				print("에이전트idx#################################################################",idx)
-				pos = pos_predator1[idx]
-				view_range = predator1_view_range
+				#pos = pos_predator1[idx]
+				#view_range = predator1_view_range
 			else:				# 2번째 predator 집단
-				idx = int(agent[11:])
+				idx = 1
+				#idx = int(agent[11:])
 				print("에이전트idx#################################################################",idx)
-				pos = pos_predator2[idx]
-				view_range = predator2_view_range
+				# pos = pos_predator2[idx]
+				# view_range = predator2_view_range
 
 			# 이 함수를 통해 현재 돌고 있는 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
-			madqn.set_agent_info(agent, pos, view_range)
+			madqn.set_agent_info(agent)
 
 
 
@@ -130,7 +132,7 @@ for ep in range(1000):
 			action = madqn.get_action(state=observation_temp, mask=None)
 			env.step(action)
 
-			observations_dict[idx].append(observation_temp)
+			observations_dict[idx].append(observation_temp) #predator1 이면 계속 여기에 append 함
 			action_dict[idx].append(action)
 			reward_dict[idx].append(reward)
 
@@ -142,29 +144,31 @@ for ep in range(1000):
 			env.step(action)
 
 
-	for agent in env.agent_iter(): #next_observation 가져오고, target 계산해서 업데이트 하는 부분을 위한 for문
+	for agent in env.agent_iter(): #next_observation 가져오고, target 계산해서 업데이트 하는 부분을 위한 for문 - predator20 개에 대한 next_obs 와 termination 이 저장될 것!ㅍ
 
 		if agent[:8] == "predator":  # predator 일때만 밑의 식이 실행되어야 함
 
 			# 잡단에 있는 predator들의 절대 좌표
-			handles = env.env.env.env.env.get_handles()
-			pos_predator1 = env.env.env.env.env.get_pos(handles[0])
-			pos_predator2 = env.env.env.env.env.get_pos(handles[1])
+			# handles = env.env.env.env.env.get_handles()
+			# pos_predator1 = env.env.env.env.env.get_pos(handles[0])
+			# pos_predator2 = env.env.env.env.env.get_pos(handles[1])
 
 			# 에이전트 자신에게 맞는 pos 가져오는 부분
 			if agent[9] == "1":  # 1번째 predator 집단
-				idx = int(agent[11:])
-				print("에이전트idx#################################################################", idx)
-				pos = pos_predator1[idx]
-				view_range = predator1_view_range
+				idx = 0
+				# idx = int(agent[11:])
+				# print("에이전트idx#################################################################", idx)
+				# pos = pos_predator1[idx]
+				# view_range = predator1_view_range
 			else:  # 2번째 predator 집단
-				idx = int(agent[11:])
-				print("에이전트idx#################################################################", idx)
-				pos = pos_predator2[idx]
-				view_range = predator2_view_range
+				idx = 1
+				# idx = int(agent[11:])
+				# print("에이전트idx#################################################################", idx)
+				# pos = pos_predator2[idx]
+				# view_range = predator2_view_range
 
 			# 이 함수를 통해 현재 돌고 있는 agent에 맞는 idx, adj, pos, view_range, gdqn, target_gdqn, buffer등을 설정해준다.
-			madqn.set_agent_info(agent, pos, view_range)
+			madqn.set_agent_info(agent)
 
 			#  현재 observation를 받아오기 위한 것
 			next_observation, _, termination, truncation, _, agent = env.last()  # 애초에 reward가 누적보상값이네 이거 수정이 필요하다.

@@ -198,22 +198,28 @@ import torch as th
 # print(observations_dict[first_agent_key][3].shape)
 
 # reward_dict 예시 (20개의 키-값 쌍)
-reward_dict = {
-    'agent_0': [1, 2, 3, 4, 5],
-    'agent_1': [2, 3, 4, 5, 6],
-    # 나머지 18개 에이전트의 데이터도 포함
-}
+# reward_dict = {
+#     'agent_0': [1, 2, 3, 4, 5],
+#     'agent_1': [2, 3, 4, 5, 6],
+#     # 나머지 18개 에이전트의 데이터도 포함
+# }
+#
+# # 각 리스트의 마지막 값을 더할 변수 초기화
+# total_last_rewards = 0
+#
+# # 각 리스트의 마지막 값을 더하기
+# for agent_rewards in reward_dict.values():
+#     print(agent_rewards)
+#     if len(agent_rewards) > 0:
+#         last_reward = agent_rewards[-1]
+#         total_last_rewards += last_reward
+#
+# # 각 리스트의 마지막 값들을 더한 결과 출력
+# print("각 리스트의 마지막 값들을 더한 결과:", total_last_rewards)
+#
 
-# 각 리스트의 마지막 값을 더할 변수 초기화
-total_last_rewards = 0
 
-# 각 리스트의 마지막 값을 더하기
-for agent_rewards in reward_dict.values():
-    print(agent_rewards)
-    if len(agent_rewards) > 0:
-        last_reward = agent_rewards[-1]
-        total_last_rewards += last_reward
-
-# 각 리스트의 마지막 값들을 더한 결과 출력
-print("각 리스트의 마지막 값들을 더한 결과:", total_last_rewards)
-
+dividend = 10
+divisor = 3
+quotient =(29// 30)
+print(quotient)  # 출력: 3
