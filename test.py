@@ -212,27 +212,16 @@ for ep in range(1000):
 					madqn.buffer.put(observations_dict[idx][step_idx-1], action_dict[idx][step_idx], reward_dict[idx][step_idx]-reward_dict[idx][step_idx-1],
 									 observations_dict[idx][step_idx], termination_dict[idx][step_idx], truncation_dict[idx][step_idx])
 
-				# 어차피 reward_dict의 각 에이전트의 리스트에 담겨있는 reward 값을 누적보상값이므로, 각각의 에이전트의 reward 리스트 마지막것들만 더하면 predator의 총 reward 값이다.
-				total_last_rewards = 0
 
-				# 각 리스트의 마지막 값을 더하기
-				for agent_rewards in reward_dict.values():
-					#print(agent_rewards)
-					if len(agent_rewards) > 0:
-						last_reward = agent_rewards[-1]
-						total_last_rewards += last_reward
-
-				# 각 리스트의 마지막 값들을 더한 결과 출력
-				print("predator팀의 전체 reward", total_last_rewards)
 
 				# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.
 				# if madqn.buffer.size() >= args.batch_size:
 				if madqn.buffer.size() >= 10:
-					print("first replay")
+					print("replay")
 					madqn.replay()
 					madqn.target_update()
-					print('EP{} EpisodeReward={}'.format(ep, [idx]))
-			# reward의 위치가 여기가 많나...맞는 듯!
+					#print('EP{} EpisodeReward={}'.format(ep, [idx]))
+
 
 			else:  # prey들은 별도의 절차없이 action 을 선택하고 step을 진행해 나간다.
 
@@ -240,6 +229,19 @@ for ep in range(1000):
 				env.step(action)
 
 		iteration_number += 1
+
+		# 어차피 reward_dict의 각 에이전트의 리스트에 담겨있는 reward 값을 누적보상값이므로, 각각의 에이전트의 reward 리스트 마지막것들만 더하면 predator의 총 reward 값이다.
+		total_last_rewards = 0
+
+		# 각 리스트의 마지막 값을 더하기
+		for agent_rewards in reward_dict.values():
+			#print(agent_rewards)
+			if len(agent_rewards) > 0:
+				last_reward = agent_rewards[-1]
+				total_last_rewards += last_reward
+
+		# 각 리스트의 마지막 값들을 더한 결과 출력
+		print("predator팀의 전체 reward", total_last_rewards)
 
 # env.state() # receives the entire state
 
