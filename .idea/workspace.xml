@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jun2.py" beforeDir="false" afterPath="$PROJECT_DIR$/jun2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -71,7 +73,7 @@
       <recent name="$PROJECT_DIR$/MAgent2" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.test">
     <configuration name="MADQN_junhyeon" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="MAgent2_hetero" />
       <option name="INTERPRETER_OPTIONS" value="" />

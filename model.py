@@ -67,11 +67,9 @@ class G_DQN(nn.Module):
 
 
 
-class ReplayBuffer:                 #슈도코드를 보면 알겠지만, 애초에 history를 저장해서 그로부터 하나씩 가져와서 학습을 진행시킨다. 수정필요!
+class ReplayBuffer:
    def __init__(self, capacity=10000):
-      self.buffer = deque(maxlen=capacity)    #deque의 알고리즘을 가지는 객체 생성
-                                    #append를 통해 가장 오른쪽에 데이터를 추가하고 appendleft를 통해 왼쪽에 추가한다.
-                                    #maxlen을 넘으면 자동으로 왼쪽에서 삭제된다.
+      self.buffer = deque(maxlen=capacity)
 
    def put(self, observation, action, reward, next_observation, termination, truncation):
       self.buffer.append([observation, action , reward, next_observation, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장

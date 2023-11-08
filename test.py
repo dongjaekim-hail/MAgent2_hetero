@@ -4,11 +4,17 @@ from arguments import args
 import argparse
 import numpy as np
 import torch as th
+import wandb
 
-th.autograd.set_detect_anomaly(True)
+
+wandb.init(project="MADQN", entity='junhyeon')
+
+
+
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--gamma', type=float, default=0.95)
+parser.add_argument('--g'
+					'amma', type=float, default=0.95)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--eps', type=float, default=1.0)
@@ -235,13 +241,21 @@ for ep in range(1000):
 
 		# 각 리스트의 마지막 값을 더하기
 		for agent_rewards in reward_dict.values():
-			#print(agent_rewards)
-			if len(agent_rewards) > 0:
+
+			if len(agent_rewards) == 0:
+				print("first step")
+
+			elif len(agent_rewards) > 0 or len(agent_rewards) == 1:
 				last_reward = agent_rewards[-1]
+				total_last_rewards += last_reward
+
+			else:
+				last_reward = agent_rewards[-1] - agent_rewards[-2]
 				total_last_rewards += last_reward
 
 		# 각 리스트의 마지막 값들을 더한 결과 출력
 		print("predator팀의 전체 reward", total_last_rewards)
+		wandb.log({"total_last_rewards": total_last_rewards})
 
 # env.state() # receives the entire state
 
