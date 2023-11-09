@@ -7,7 +7,8 @@ import torch as th
 import wandb
 
 
-wandb.init(project="MADQN", entity='junhyeon')
+# wandb.init(project="MADQN", entity='junhyeon')
+# wandb.run.name = 'test1'
 
 
 
@@ -99,6 +100,8 @@ for ep in range(1000):
 	# 각 에이전트에 대한 딕셔너리 초기화
 	for agent_idx in range(n_predator1 + n_predator2):
 		truncation_dict[agent_idx] = []
+
+
 
 
 	iteration_number = 0
@@ -255,7 +258,7 @@ for ep in range(1000):
 
 		# 각 리스트의 마지막 값들을 더한 결과 출력
 		print("predator팀의 전체 reward", total_last_rewards)
-		wandb.log({"total_last_rewards": total_last_rewards})
+		#wandb.log({"total_last_rewards": total_last_rewards})
 
 # env.state() # receives the entire state
 

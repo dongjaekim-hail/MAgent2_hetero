@@ -168,4 +168,13 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             self.gdqn_optimizer.step()
 
 
+    def model_save(self): #model 과 target model 저장
+        torch.save(network.state_dict(),'파일경로')
+
+    def model_reload(self):
+        model = model()
+        model.load_state_dict(torch.load('파일경로'))
+
+
+
 
