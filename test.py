@@ -21,6 +21,7 @@ parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--eps', type=float, default=1.0)
 parser.add_argument('--eps_decay', type=float, default=0.995)
 parser.add_argument('--eps_min', type=float, default=0.01)
+parser.add_argument('--max_update_steps', type=int, default=1e9)
 
 args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
 
@@ -59,7 +60,7 @@ def process_array(arr):
 
     return result
 
-
+step_term = 0
 
 for ep in range(1000):
 	env.reset()
@@ -237,6 +238,8 @@ for ep in range(1000):
 				action = env.action_space(agent).sample()
 				env.step(action)
 
+		step_term += 0
+
 		iteration_number += 1
 
 		# 어차피 reward_dict의 각 에이전트의 리스트에 담겨있는 reward 값을 누적보상값이므로, 각각의 에이전트의 reward 리스트 마지막것들만 더하면 predator의 총 reward 값이다.
@@ -259,6 +262,9 @@ for ep in range(1000):
 		# 각 리스트의 마지막 값들을 더한 결과 출력
 		print("predator팀의 전체 reward", total_last_rewards)
 		#wandb.log({"total_last_rewards": total_last_rewards})
+
+	if step_term > args.max_update_steps:
+		break
 
 # env.state() # receives the entire state
 
