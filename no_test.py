@@ -7,15 +7,14 @@ import torch as th
 import wandb
 
 
-#wandb.init(project="MADQN", entity='hails')
-#wandb.run.name = 'semi'
+wandb.init(project="MADQN", entity='hails')
+wandb.run.name = 'semi3'
 
 
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--g'
-					'amma', type=float, default=0.95)
+parser.add_argument('--gamma', type=float, default=0.95)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--eps', type=float, default=1.0)
@@ -27,7 +26,7 @@ args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=
 
 render_mode = 'rgb_array'
 env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
-								max_cycles=100, extra_features=False,render_mode=render_mode)
+								max_cycles=50000, extra_features=False,render_mode=render_mode)
 
 entire_state = (65,65,3)
 predator1_obs = (10,10,3)
@@ -144,7 +143,7 @@ for ep in range(1000):
 
 
 				#  현재 observation를 받아오기 위한 것
-				observation, reward, termination, truncation, info, agent = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
+				observation, reward, termination, truncation, info = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
 				#print(" 첫번째 last 가 반환하는 agent 의 정보",agent)
 				observation_temp = process_array(observation)
 				action = madqn.get_action(state=observation_temp, mask=None)
@@ -193,7 +192,7 @@ for ep in range(1000):
 				madqn.set_agent_info(agent, pos, view_range)
 
 				#  현재 observation를 받아오기 위한 것
-				observation, reward, termination, truncation, info, agent = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
+				observation, reward, termination, truncation, info = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
 				#print(" 첫번째 last 가 반환하는 agent 의 정보", agent)
 				observation_temp = process_array(observation)
 
@@ -247,7 +246,7 @@ for ep in range(1000):
 			if len(agent_rewards) == 0:
 				print("first step")
 
-			elif len(agent_rewards) > 0 or len(agent_rewards) == 1:
+			elif len(agent_rewards) == 1:
 				last_reward = agent_rewards[-1]
 				total_last_rewards += last_reward
 
@@ -257,8 +256,11 @@ for ep in range(1000):
 
 		# 각 리스트의 마지막 값들을 더한 결과 출력
 		print("predator팀의 전체 reward", total_last_rewards)
-		#wandb.log({"total_last_rewards": total_last_rewards})
+		wandb.log({"total_last_rewards": total_last_rewards})
 
+
+	if iteration_number > args.max_update_steps:
+		break
 # env.state() # receives the entire state
 
 
