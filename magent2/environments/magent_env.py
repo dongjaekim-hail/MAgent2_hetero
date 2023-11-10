@@ -34,29 +34,24 @@ class magent_parallel_env(ParallelEnv):
         self.max_cycles = max_cycles
         self.minimap_mode = minimap_mode
         self.extra_features = extra_features
-        self.env = env                              #그리고 env는 다 같은 env이다. 자식클래스인 _parallel_env(in hetero_adversial)에서
-                                                    #모두 같은 env인 것. 즉 env의 주소를 계속 넘겨받고 있다는 것이다.
-        self.handles = active_handles               ##[c_int(0), c_int(1), c_int(2), c_int(3)]
-        self._all_handles = self.env.get_handles()  #[c_int(0), c_int(1), c_int(2), c_int(3)] config로부터 온 것 같은데...
+        self.env = env
+        self.handles = active_handles
+        self._all_handles = self.env.get_handles()
         env.reset()
-        self.generate_map()                         #희한하네....이게 돌아가? 되나보네 신기하네, 앞서서 이미 _parallel_env가 작동하기 때문에
-                                                    #그 안에서 이미 generate_map() 매서드가 작동하기 때문에 돌아가는게 가능한 것 같다.
+        self.generate_map()
         self.team_sizes = [
-            env.get_num(handle) for handle in self.handles #handle에 [c_int(0), c_int(1), c_int(2), c_int(3)]가 하나씩 들어가면서 숫자를 가져온다.
+            env.get_num(handle) for handle in self.handles
         ]  # gets updated as agents die
         self.agents = [
             f"{names[j]}_{i}"
             for j in range(len(self.team_sizes))
             for i in range(self.team_sizes[j])
-        ]                                           #generate_map()함수에서 각 집단의 수를 만들어줬다. 그 수대로 agents들을 생성하고 있는 것
-        self.possible_agents = self.agents[:]       #['predator_0',... 'predator_24','prey_0',..., 'prey_49'] 이걸 여기서 만드네
-        num_actions = [env.get_action_space(handle)[0] for handle in self.handles]   #num_actions=[13, 9]
-                                                    #Predator action options: [do_nothing, move_4, tag_8] 으로 총 13가지의 옵션
-                                                    #Prey action options: [do_nothing, move_8] 으로 총 9가지의 옵션
-
-        action_spaces_list = [                      #Discrete이 정확히 무슨 함수인지는 모르겠으나, action의 개수를 나타내는 정도로만 이해하면 될 것 같다.
-            Discrete(num_actions[j])                #action_spaces_list=[Discrete(13)...Discrete(13),Discrete(9)...Discrete(9)]
-            for j in range(len(self.team_sizes))    #Discrete(13)이 predator수인 25개 Discrete(9)이 prey수인 50개가 리스트에 있음.
+        ]
+        self.possible_agents = self.agents[:]
+        num_actions = [env.get_action_space(handle)[0] for handle in self.handles]
+        action_spaces_list = [
+            Discrete(num_actions[j])
+            for j in range(len(self.team_sizes))
             for i in range(self.team_sizes[j])
         ]
         # may change depending on environment config? Not sure.
@@ -67,17 +62,7 @@ class magent_parallel_env(ParallelEnv):
             for j in range(len(self.team_sizes))
             for i in range(self.team_sizes[j])
         ]
-                                                #observation_space_list는 총 75개의 리스트인데, 한하나가 다음과 같다.
-                                                #Box(0.0, 2.0, (10, 10, 5), float32)
-                                                #...(25개있음 predator의 observation_space_list 인 것 같고,
-                                                #Box(0.0, 2.0, (10, 10, 5), float32)
-                                                #Box(0.0, 2.0, (9, 9, 5), float32)
-                                                #...(50개 있음 prey의 observation_space_list인 것 같고)
-                                                #Box(0.0, 2.0, (9, 9, 5), float32)
-                                                #이것들이 왜 이런 space를 가지게 되었는지는 모르겠으나 이를 이해하기 위해서는
-                                                # _calc_obs_shapes()와 _calc_state_shape()를 이해해야 하는데 이 코드들 따라가보면
-                                                #결국 GridWorld 클래스의 초반 부분을 이해해야 한다. 그런데 이것이 C언어로 이루어져 있는
-                                                #GYM환경의 코드를 이해해야 한다. 그래서 일단은 여기까지만 이해하자.
+
         self.state_space = Box(low=0.0, high=2.0, shape=state_shape, dtype=np.float32)
         reward_low, reward_high = reward_range
 
@@ -133,7 +118,7 @@ class magent_parallel_env(ParallelEnv):
         for feature_space in feat_size:
             if not self.extra_features:
                 feature_space[0] = 2 if self.minimap_mode else 0
-        obs_spaces = [           #obs_spaces=[(10, 10, 5), (9, 9, 5)]
+        obs_spaces = [
             (view_space[:2] + (view_space[2] + feature_space[0],))
             for view_space, feature_space in zip(view_spaces, feat_size)
         ]
@@ -246,8 +231,6 @@ class magent_parallel_env(ParallelEnv):
                 :, view.shape[1] // 2, view.shape[2] // 2, 2
             ]
 
-            return pos
-
             if self.extra_features:
                 add_zeros = np.zeros(
                     (
@@ -269,9 +252,7 @@ class magent_parallel_env(ParallelEnv):
                 state_features = np.hstack((actions, rewards))
 
                 state[pos_x, pos_y, 1 + len(self.team_sizes) * 2 :] = state_features
-
-        #return pos
-        #return state
+        return state
 
     def step(self, all_actions):
         action_list = [-1] * len(self.agents)

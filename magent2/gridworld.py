@@ -1,4 +1,5 @@
 """gridworld interface"""
+
 import ctypes
 import importlib
 import os
@@ -14,7 +15,7 @@ class GridWorld(Environment):
     OBS_INDEX_VIEW = 0
     OBS_INDEX_HP = 1
 
-    def __init__(self, config, **kwargs):   #kwargs={'map_size': 45}
+    def __init__(self, config, **kwargs):
         """
         Parameters
         ----------
@@ -24,7 +25,6 @@ class GridWorld(Environment):
                 kwargs are the arguments to the config
             if config is a Config Object, then parameters are stored in that object
         """
-
         Environment.__init__(self)
 
         # if is str, load built in configuration
@@ -54,7 +54,7 @@ class GridWorld(Environment):
             "render_dir": str,
         }
 
-        for key in config.config_dict:              #앞에서도 보았듯이 config_dict은 건드린게 없으니까 건드릴 필요 없을 듯. 이는 단지 c으로 바꿔서 라이브러리에 적용하기 위한 것
+        for key in config.config_dict:
             value_type = config_value_type[key]
             if value_type is int:
                 _LIB.env_config_game(
@@ -81,18 +81,16 @@ class GridWorld(Environment):
                     ctypes.c_char_p(config.config_dict[key]),
                 )
 
-        # register agent types                  #문제는 여긴데...
-        for name in config.agent_type_dict:     #name={predator, prey}
-            type_args = config.agent_type_dict[name] #그런데 여기서 왜 prey의 것만 type_args에 넣는거야? 아님! 틀렸음!! X
-                                                     #그게 아니라,,, for문이잖아! 먼저 predator의 option을 가지고 밑의 코드를 돌린 다음에
-                                                     #다시 prey꺼를 받아서 하겠지!
+        # register agent types
+        for name in config.agent_type_dict:
+            type_args = config.agent_type_dict[name]
 
             # special pre-process for view range and attack range
             for key in [x for x in type_args.keys()]:
                 if key == "view_range":
-                    val = type_args[key]       #'view_range': circle(5) 이거 클래스라서 radius랑 angle은 그 클래스 안에 선언된 변수임
+                    val = type_args[key]
                     del type_args[key]
-                    type_args["view_radius"] = val.radius  #그래서 . 을 이용할 수 있는 것임
+                    type_args["view_radius"] = val.radius
                     type_args["view_angle"] = val.angle
                 elif key == "attack_range":
                     val = type_args[key]
@@ -109,8 +107,6 @@ class GridWorld(Environment):
             _LIB.gridworld_register_agent_type(
                 self.game, name.encode("ascii"), length, keys, values
             )
-        #결국 keys 변수는 type_args의 키들을 ASCII 문자열로 인코딩한 후 C 스타일 문자열 포인터 배열로 만든 것을 나타낸다. 이러한 처리는 C 라이브러리와 상호작용할 때
-        # 인자나 데이터를 올바른 형태로 전달하기 위해 필요한 단계. 코드 전체 구현을 보면 어떤 라이브러리와의 상호작용을 위한 준비 단계인 것으로 보인다.
 
         # serialize event expression, send to C++ engine
         self._serialize_event_exp(config)
@@ -133,7 +129,6 @@ class GridWorld(Environment):
         self.action_space = {}
         buf = np.empty((3,), dtype=np.int32)
         for handle in self.group_handles:
-            print(handle)
             _LIB.env_get_info(
                 self.game,
                 handle,
@@ -155,8 +150,6 @@ class GridWorld(Environment):
                 buf.ctypes.data_as(ctypes.POINTER(ctypes.c_int32)),
             )
             self.action_space[handle.value] = (buf[0],)
-
-
 
     def reset(self):
         """reset environment"""
@@ -594,11 +587,7 @@ class GridWorld(Environment):
                         symbol2int[item] = config.symbol_ct
                         config.symbol_ct += 1
 
-        # 수정한 결과 reward_rules에는 다음과 같은 list가 담긴다.
-        # [[<magent2.gridworld.EventNode object at 0x118352280>, [<magent2.gridworld.AgentSymbol object at 0x118352100>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False],
-        # [<magent2.gridworld.EventNode object at 0x1183522e0>, [<magent2.gridworld.AgentSymbol object at 0x118352160>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False],
-        # [<magent2.gridworld.EventNode object at 0x118352340>,[<magent2.gridworld.AgentSymbol object at 0x1183521c0>, <magent2.gridworld.AgentSymbol object at 0x118352220>], [1, -1], False]]
-        for rule in config.reward_rules:              #config에 담긴 reward_rules 을 가져옴
+        for rule in config.reward_rules:
             on = rule[0]
             receiver = rule[1]
             for symbol in receiver:
@@ -694,14 +683,8 @@ class EventNode:
         self.predicate = None
 
         self.inputs = []
-                                                        # Event = EventNode()
-                                                        #왜 굳이 함수가 아닌 객체를 호출해서 __call__함수를 이요해서 객체를 함수처럼 이용
-                                                        #하는 걸까?
-                                                        #우선 EventNode 클래스의 인스턴스(객체)에는 op,predicate 라는 일반 변수,
-                                                        #inputs 이라는 리스트가 있다.
-                                                        # Event(agent(0,-1), "attack", agent(1,-1))
-                                                        # subject:agent(0,-1) args:(agent(1,-1),) predicate: 'attack'
-    def __call__(self, subject, predicate, *args):      #근데 왜 굳이 args를 *args으로 받았을까?  더 많은 인자를 넘겨줘도 되는 것 마냥
+
+    def __call__(self, subject, predicate, *args):
         node = EventNode()
         node.predicate = predicate
         if predicate == "kill":
@@ -718,12 +701,8 @@ class EventNode:
             x2, y2 = max(coor[0][0], coor[1][0]), max(coor[0][1], coor[1][1])
             node.inputs = [subject, x1, y1, x2, y2]
         elif predicate == "attack":
-            node.op = EventNode.OP_ATTACK              #node.op=7
+            node.op = EventNode.OP_ATTACK
             node.inputs = [subject, args[0]]
-            print(subject)
-            print(args[0])
-            print(node.inputs)
-            #node.inputs=["attack",agent(1,-1)]
         elif predicate == "kill":
             node.op = EventNode.OP_KILL
             node.inputs = [subject, args[0]]
@@ -741,7 +720,7 @@ class EventNode:
             node.inputs = [subject]
         else:
             raise Exception("invalid predicate of event " + predicate)
-        return node                                   #그리고 node를  반환한다.
+        return node
 
     def __and__(self, other):
         node = EventNode()
@@ -762,7 +741,7 @@ class EventNode:
         return node
 
 
-Event = EventNode()          #우선 Eventnode 클래스의 객체 Event를 만들고, hetero_adversial에서 __call__함수를 호출한다.
+Event = EventNode()
 
 
 class AgentSymbol:
@@ -777,7 +756,7 @@ class AgentSymbol:
             int: a deterministic integer id
             str: can be 'all' or 'any', represents all or any agents in a group
         """
-        self.group = group if group is not None else -1  #group이 none이 아니라면, self.group=group을 하고, none이라면 -1을 넣어라.
+        self.group = group if group is not None else -1
         if index == "any":
             self.index = -1
         elif index == "all":
@@ -880,7 +859,6 @@ class Config:
         if len(receiver) != len(value):
             raise Exception("the length of receiver and value should be equal")
         self.reward_rules.append([on, receiver, value, terminal])
-        print(self.reward_rules)
 
 
 class CircleRange:
