@@ -168,4 +168,8 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             self.gdqn_optimizer.step()
 
 
+    def reset_shred(self,shared):
+        self.shared = shared
+
+
 

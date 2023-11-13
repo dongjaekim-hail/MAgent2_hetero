@@ -24,9 +24,9 @@ parser.add_argument('--max_update_steps', type=int, default=1e9)
 
 args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
 
-render_mode = 'rgb_array'
+render_mode = 'human'
 env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
-								max_cycles=100, extra_features=False,render_mode=render_mode)
+								max_cycles=10, extra_features=False,render_mode=render_mode)
 
 entire_state = (65,65,3)
 predator1_obs = (10,10,3)
@@ -66,6 +66,8 @@ def main():
 
 		env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
 										max_cycles=10, extra_features=False, render_mode=render_mode)
+
+		madqn.reset_shred(shared) #매 에피소드마다 shared reset
 		env.reset()
 		print("ep:",ep)
 
@@ -153,7 +155,7 @@ def main():
 
 
 					#  현재 observation를 받아오기 위한 것
-					observation, reward, termination, truncation, info = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
+					observation, reward, termination, truncation, info , _ = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
 					#print(" 첫번째 last 가 반환하는 agent 의 정보",agent)
 					observation_temp = process_array(observation)
 					action = madqn.get_action(state=observation_temp, mask=None)
@@ -201,7 +203,7 @@ def main():
 					madqn.set_agent_info(agent, pos, view_range)
 
 					#  현재 observation를 받아오기 위한 것
-					observation, reward, termination, truncation, info = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
+					observation, reward, termination, truncation, info, _ = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
 					#print(" 첫번째 last 가 반환하는 agent 의 정보", agent)
 					observation_temp = process_array(observation)
 
