@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
-      <change beforePath="$PROJECT_DIR$/model.save.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modelsave.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/no_test_dk.py" beforeDir="false" afterPath="$PROJECT_DIR$/no_test_dk.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -276,12 +274,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/no_test_dk.py</url>
-          <line>314</line>
+          <line>301</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/no_test_dk.py</url>
-          <line>318</line>
+          <line>305</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>
