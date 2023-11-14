@@ -280,7 +280,7 @@ def main():
 						total_last_rewards += last_reward
 				# 각 리스트의 마지막 값들을 더한 결과 출력
 				print("predator팀의 전체 reward", total_last_rewards)
-				# wandb.log({"total_last_rewards": total_last_rewards})
+				#wandb.log({"total_last_rewards": total_last_rewards})
 
 			iteration_number += 1
 
@@ -324,11 +324,11 @@ if __name__ == '__main__':
 	main()
 	#print('done')
 	#데이터 저장
-	for i in range(len(madqn.gdqns)) :
-		print(i)
-		th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
-		print("d")
-		th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
+	# for i in range(len(madqn.gdqns)) :
+	# 	print(i)
+	# 	th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
+	# 	print("d")
+	# 	th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
 
 
 	print('done')
