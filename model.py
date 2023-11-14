@@ -85,3 +85,47 @@ class ReplayBuffer:
 
    def size(self):
       return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것
+
+
+class DQN(nn.Module):
+    def __init__(self, dim_act, observation_state):
+        super(DQN, self).__init__()
+        self.observation_state = observation_state
+        self.dim_act = dim_act
+
+        # DQN
+        self.dim_input = np.prod(observation_state)
+        self.FC1 = nn.Linear(self.dim_input, 128)
+        self.FC2 = nn.Linear(128, dim_act)
+        self.relu = nn.ReLU()
+
+    def forward(self, state):
+        if isinstance(state, np.ndarray):
+            state = torch.tensor(state).float()
+        else:
+            pass
+
+        x = state.reshape(-1, self.dim_input)
+        x = self.relu(self.FC1(x))
+        x = self.FC2(x)
+
+        return x
+
+
+class ReplayBuffer_cen:
+   def __init__(self, capacity=10000):
+      self.buffer = deque(maxlen=capacity)
+
+   def put(self, observation , action , reward, next_observation, termination, truncation):
+       self.buffer.append([observation, action , reward, next_observation, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
+
+
+
+   def sample(self):
+       sample = random.sample(self.buffer, 1)  # batch size만큼 buffer에서 가져온다.
+
+       observation , action , reward, next_observation, termination, truncation = zip(*sample)
+       return observation , action , reward, next_observation, termination, truncation  # buffer에서 데이터 받아서 반환하는 과정을 거침
+
+   def size(self):
+      return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것
