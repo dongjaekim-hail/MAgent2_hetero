@@ -17,6 +17,7 @@ eps_decay = 0.1
 predator1_adj = (100,100)
 predator2_adj = (36,36)
 #agent = None
+import argparse
 
 
 
@@ -128,7 +129,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
 
     def get_action(self, state, mask=None):
-        book = self.from_guestbook() #self.pos에 기록된 값을 참고하여 shared graph에서 정보를 가져오는데,,,여기서 문제가 발생한다.
+        book = self.from_guestbook() #self.pos에 기록된 값을 참고하여 shared graph에서 정보를 가져온다.
         q_value, shared_info = self.gdqn(state, self.adj, book) #shared_info : shared graph에 넘겨주어야 할 정보들
 
         self.to_guestbook(shared_info) #shared_graph에 받아온 정보를 넘겨준다.
@@ -136,14 +137,15 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
         self.epsilon = max(self.epsilon, args.eps_min)  # 그리고 args_eps 값의 최소값으로 정해진 것보다는 크도록 설정
         # predict에는 state에 따른 각 action의 값들이 나올건데, 그 값들을 저장하는 것
         if np.random.random() < self.epsilon:  # 0부터 1까지 랜덤한 숫자를 생성하고, 그 수가 입실론보다 작으면 action을 랜덤으로 뽑는다.
-            return random.randint(0, self.dim_act - 1)  # 그래서 0부터 action_dim-1 까지의 정수중에서 랜덤으로 하나 뽑는 거다.
-        return torch.argmax(q_value).item()
+            return random.randint(0, self.dim_act - 1), book  # 그래서 0부터 action_dim-1 까지의 정수중에서 랜덤으로 하나 뽑는 거다.
+        return torch.argmax(q_value).item() , book
         #return np.argmax(q_value)  # 만약 그게 아니라면, q_value 증 가장 크게 하는 인덱스의 값을 추출한다.
 
     def replay(self): #배치사이즈 살려야 할 것 같은데....나중에 unsqueeze 없애야함
         for _ in range(10):
-            book = self.from_guestbook()
-            observations, actions, rewards, next_observations, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
+            self.gdqn_optimizer.zero_grad()
+
+            observations, book, actions, rewards, next_observations, book_next, termination, truncation = self.buffer.sample()  # 위의 생성한 buffer에서 하나의 sample을 뽑음
 
             next_observations = torch.tensor(next_observations)
             observations = torch.tensor(observations)
@@ -151,13 +153,13 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
             next_observations = next_observations.reshape(-1,3)
             observations = observations.reshape(-1,3)
 
-            self.gdqn_optimizer.zero_grad()
 
-            q_values, _ = self.gdqn(observations.unsqueeze(0), (self.adj).unsqueeze(0), book.detach())# 실제로 observation에서의 q 값
+
+            q_values, _ = self.gdqn(observations.unsqueeze(0), (self.adj).unsqueeze(0), book[0].detach())# 실제로 observation에서의 q 값
             q_values = q_values[0][actions]
-#아 adj 를 unsqueeze 를 해야하는것 같다. 그래서 36*36 을 1*36*36 으로 해주어야 densesageconv를 할 수 있는 것 같다.
+            #아 adj 를 unsqueeze 를 해야하는것 같다. 그래서 36*36 을 1*36*36 으로 해주어야 densesageconv를 할 수 있는 것 같다.
 
-            next_q_values, _ = self.gdqn_target(next_observations.unsqueeze(0), (self.adj).unsqueeze(0), book)  # next state에 대해서 target 값
+            next_q_values, _ = self.gdqn_target(next_observations.unsqueeze(0), (self.adj).unsqueeze(0), book_next[0].detach())  # next state에 대해서 target 값
             next_q_values = torch.max(next_q_values)  # next state에 대해서 target 값
 
             targets = int(rewards[0]) + (1 - int(termination[0])) * next_q_values * args.gamma
@@ -170,6 +172,3 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
     def reset_shred(self,shared):
         self.shared = shared
-
-
-

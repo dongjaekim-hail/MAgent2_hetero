@@ -7,6 +7,7 @@ from collections import deque
 import torch.optim as optim
 from arguments import args
 import random
+import arguments
 
 class G_DQN(nn.Module):
     def __init__(self,  dim_act, observation_state):
@@ -54,7 +55,7 @@ class G_DQN(nn.Module):
         shared = dqn * shared # sigmoid 해준 값과 x를 dot곱해줌
         shared = shared.reshape(self.observation_state) #다시 10*10*5 꼴로 만들어주어야 함-> 이를 shared graph 에 넘겨주어야 한다.
 
-
+        #info에 decaying!
         input = torch.cat((shared, info), dim=0) #현재 info가 5*5*7 이라서 concatenate이 안됨->수정함
 
 
@@ -71,16 +72,16 @@ class ReplayBuffer:
    def __init__(self, capacity=10000):
       self.buffer = deque(maxlen=capacity)
 
-   def put(self, observation, action, reward, next_observation, termination, truncation):
-      self.buffer.append([observation, action , reward, next_observation, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
+   def put(self, observation, book , action , reward, next_observation, book_next, termination, truncation):
+       self.buffer.append([observation, book, action , reward, next_observation, book_next, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
 
 
 
    def sample(self):
        sample = random.sample(self.buffer, 1)  # batch size만큼 buffer에서 가져온다.
 
-       observation, action, reward, next_observation, termination, truncation = zip(*sample)
-       return observation, action, reward, next_observation, termination, truncation  # buffer에서 데이터 받아서 반환하는 과정을 거침
+       observation, book , action , reward, next_observation, book_next, termination, truncation = zip(*sample)
+       return observation, book , action , reward, next_observation, book_next, termination, truncation  # buffer에서 데이터 받아서 반환하는 과정을 거침
 
    def size(self):
       return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것
