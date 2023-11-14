@@ -20,7 +20,8 @@ parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--eps', type=float, default=1.0)
 parser.add_argument('--eps_decay', type=float, default=0.995)
 parser.add_argument('--eps_min', type=float, default=0.01)
-parser.add_argument('--max_update_steps', type=int, default=10)
+parser.add_argument('--max_update_steps', type=int, default=4)
+parser.add_argument('--total_step', type=int, default=4)
 parser.add_argument('--info_decay',type=int, default=0.5)
 
 
@@ -63,7 +64,7 @@ def process_array(arr):
 
 
 def main():
-	for ep in range(1000):
+	for ep in range(100000):
 		ep_reward = 0
 
 		env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
@@ -307,7 +308,9 @@ def main():
 		# 	print('*' * 10, 'train over', '*' * 10)
 		# 	print(iteration_number)
 		# 	break
-		if step_idx > args.max_update_steps:
+
+
+		if ep > args.total_step: #100
 			print('*' * 10, 'train over', '*' * 10)
 			print(iteration_number)
 			break
@@ -319,6 +322,15 @@ def main():
 
 if __name__ == '__main__':
 	main()
+	#print('done')
+	#데이터 저장
+	for i in range(len(madqn.gdqns)) :
+		print(i)
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
+		print("d")
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
+
+
 	print('done')
 
 

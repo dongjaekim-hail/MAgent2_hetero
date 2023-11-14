@@ -5,21 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
-      <change afterPath="$PROJECT_DIR$/test_m2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MADQN.py" beforeDir="false" afterPath="$PROJECT_DIR$/MADQN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MADQN2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun1.py" beforeDir="false" afterPath="$PROJECT_DIR$/jun1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun3.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun4.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun5.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun6.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/jun7.py" beforeDir="false" afterPath="$PROJECT_DIR$/no_test_dk_repro.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/no_test_dk.py" beforeDir="false" afterPath="$PROJECT_DIR$/no_test_dk.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test3.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -287,18 +274,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/no_test_dk.py</url>
-          <line>311</line>
+          <line>314</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/no_test_dk.py</url>
-          <line>315</line>
+          <line>318</line>
           <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/model.py</url>
-          <line>83</line>
-          <option name="timeStamp" value="30" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
