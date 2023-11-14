@@ -289,19 +289,6 @@ def main():
 
 
 		ep_reward += total_last_rewards
-
-		reward_dict = {}
-		# 각 에이전트에 대한 딕셔너리 초기화
-		for agent_idx in range(n_predator1 + n_predator2):
-			reward_dict[agent_idx] = []
-
-
-		# observation 딕셔너리 초기화
-		observations_dict = {}
-		# 각 에이전트에 대한 딕셔너리 초기화
-		for agent_idx in range(n_predator1 + n_predator2):
-			observations_dict[agent_idx] = []
-
 		print("ep_reward:", ep_reward)
 
 		# if iteration_number > args.max_update_steps:
