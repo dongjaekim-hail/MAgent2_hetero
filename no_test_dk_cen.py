@@ -5,7 +5,7 @@ import argparse
 import numpy as np
 import torch as th
 # import wandb
-
+#
 
 # wandb.init(project="MADQN", entity='hails')
 # wandb.run.name = 'cen'
@@ -20,7 +20,7 @@ parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--eps', type=float, default=1.0)
 parser.add_argument('--eps_decay', type=float, default=0.995)
 parser.add_argument('--eps_min', type=float, default=0.01)
-parser.add_argument('--max_update_steps', type=int, default=4)
+parser.add_argument('--max_update_steps', type=int, default=100)
 parser.add_argument('--total_step', type=int, default=4)
 parser.add_argument('--info_decay',type=int, default=0.5)
 

@@ -119,7 +119,7 @@ class ReplayBuffer_cen:
    def put(self, observation , action , reward, next_observation, termination, truncation):
        self.buffer.append([observation, action , reward, next_observation, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
 
-
+#
 
    def sample(self):
        sample = random.sample(self.buffer, 1)  # batch size만큼 buffer에서 가져온다.

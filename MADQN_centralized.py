@@ -89,7 +89,7 @@ class MADQN_cen():  # def __init__(self,  dim_act, observation_state):
         self.gdqn_target = self.gdqn_targets[self.idx]
         self.gdqn_optimizer = self.gdqn_optimizers[self.idx]
         self.buffer = self.buffers[self.idx]
-
+    #
     # def from_guestbook(self):  # 에이전트의 pos 정보를 받아서 정보를 가져오는 함수 pos:에이전트의 절대 위치 pos: 리스트 shared: 방명록
     #     x_start = self.pos[0] + 10
     #
