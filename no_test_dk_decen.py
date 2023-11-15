@@ -24,7 +24,7 @@ device = 'cuda' if th.cuda.is_available() else 'cpu'
 args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
 
 wandb.init(project="MADQN", entity='hails',config=args.__dict__)
-wandb.run.name = 'cen4'
+wandb.run.name = 'decen4'
 
 
 render_mode = 'rgb_array'
