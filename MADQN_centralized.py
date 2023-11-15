@@ -22,7 +22,7 @@ import argparse
 
 
 class MADQN_cen():  # def __init__(self,  dim_act, observation_state):
-    def __init__(self, n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act , entire_state):
+    def __init__(self, n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act , entire_state, device = 'cpu', buffer_size = 500):
         self.entire_state = entire_state
         self.predator1_obs = predator1_obs
         self.predator2_obs = predator2_obs
@@ -31,13 +31,14 @@ class MADQN_cen():  # def __init__(self,  dim_act, observation_state):
         self.dim_act = dim_act
         self.epsilon = args.eps
         self.eps_decay = args.eps_decay
+        self.device = device
 
         # 초반 n_predator1 개는 predator1의 dqn 이고, 그 뒤의 것은 predator2 의 dqn 둘의 observation 이 다르기 때문에 다른 dqn을 사용해야 한다.
-        self.gdqns = [DQN(self.dim_act, self.predator1_obs) for _ in range(self.n_predator1)] + [
-            DQN(self.dim_act, self.predator2_obs) for _ in range(self.n_predator2)]
-        self.gdqn_targets = [DQN(self.dim_act, self.predator1_obs) for _ in range(self.n_predator1)] + [
-            DQN(self.dim_act, self.predator2_obs) for _ in range(self.n_predator2)]  # 학습의 안정을 위해 target dqn 설정
-        self.buffers = [ReplayBuffer_cen() for _ in range(self.n_predator1 + self.n_predator2)]
+        self.gdqns = [DQN(self.dim_act, self.predator1_obs).to(self.device) for _ in range(self.n_predator1)] + [
+            DQN(self.dim_act, self.predator2_obs).to(self.device) for _ in range(self.n_predator2)]
+        self.gdqn_targets = [DQN(self.dim_act, self.predator1_obs).to(self.device) for _ in range(self.n_predator1)] + [
+            DQN(self.dim_act, self.predator2_obs).to(self.device) for _ in range(self.n_predator2)]  # 학습의 안정을 위해 target dqn 설정
+        self.buffers = [ReplayBuffer_cen(capacity=buffer_size) for _ in range(self.n_predator1 + self.n_predator2)]
         self.gdqn_optimizers = [Adam(x.parameters(), lr=0.001) for x in self.gdqns]
         #self.target_optimizer = [Adam(x.parameters(), lr=0.001) for x in self.gdqns_target] #이게 필요하지는 않지 어차피 weight받아와서 업데이트 하는건데
         self.criterion = nn.MSELoss()
@@ -130,7 +131,7 @@ class MADQN_cen():  # def __init__(self,  dim_act, observation_state):
 
     def get_action(self, state, mask=None):
         #book = self.from_guestbook() #self.pos에 기록된 값을 참고하여 shared graph에서 정보를 가져온다.
-        q_value = self.gdqn(state) #shared_info : shared graph에 넘겨주어야 할 정보들
+        q_value = self.gdqn(torch.tensor(state).to(self.device)) #shared_info : shared graph에 넘겨주어야 할 정보들
 
         #self.to_guestbook(shared_info) #shared_graph에 받아온 정보를 넘겨준다.
         self.epsilon *= args.eps_decay  # 기존의 args에 eps_decay를 곱해서 다시 저장하라는 말
@@ -168,6 +169,11 @@ class MADQN_cen():  # def __init__(self,  dim_act, observation_state):
             loss.backward()
             #loss.backward()
             self.gdqn_optimizer.step()
+
+            try:
+                torch.cuda.empty_cache()
+            except:
+                pass
 
 
     def reset_shred(self,shared):

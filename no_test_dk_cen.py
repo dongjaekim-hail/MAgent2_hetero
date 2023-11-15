@@ -4,14 +4,14 @@ from arguments import args
 import argparse
 import numpy as np
 import torch as th
-# import wandb
+import wandb
 #
 
-# wandb.init(project="MADQN", entity='hails')
-# wandb.run.name = 'cen'
+wandb.init(project="MADQN", entity='hails')
+wandb.run.name = 'cen4'
 
 
-
+device = 'cuda' if th.cuda.is_available() else'cpu'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gamma', type=float, default=0.95)
@@ -21,7 +21,7 @@ parser.add_argument('--eps', type=float, default=1.0)
 parser.add_argument('--eps_decay', type=float, default=0.995)
 parser.add_argument('--eps_min', type=float, default=0.01)
 parser.add_argument('--max_update_steps', type=int, default=100)
-parser.add_argument('--total_step', type=int, default=4)
+parser.add_argument('--total_step', type=int, default=10000)
 parser.add_argument('--info_decay',type=int, default=0.5)
 
 
@@ -279,8 +279,9 @@ def main():
 						last_reward = agent_rewards[-1] - agent_rewards[-2]
 						total_last_rewards += last_reward
 				# 각 리스트의 마지막 값들을 더한 결과 출력
+				ep_reward += total_last_rewards
 				print("predator팀의 전체 reward", total_last_rewards)
-				#wandb.log({"total_last_rewards": total_last_rewards})
+				wandb.log({"total_last_rewards": total_last_rewards})
 
 			iteration_number += 1
 
@@ -288,7 +289,7 @@ def main():
 
 
 
-		ep_reward += total_last_rewards
+
 
 		reward_dict = {}
 		# 각 에이전트에 대한 딕셔너리 초기화
@@ -302,6 +303,7 @@ def main():
 		for agent_idx in range(n_predator1 + n_predator2):
 			observations_dict[agent_idx] = []
 
+		wandb.log({"ep_reward": ep_reward})
 		print("ep_reward:", ep_reward)
 
 		# if iteration_number > args.max_update_steps:
@@ -323,12 +325,10 @@ def main():
 if __name__ == '__main__':
 	main()
 	#print('done')
-	#데이터 저장
-	# for i in range(len(madqn.gdqns)) :
-	# 	print(i)
-	# 	th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
-	# 	print("d")
-	# 	th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
+
+	for i in range(len(madqn.gdqns)) :
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
 
 
 	print('done')
