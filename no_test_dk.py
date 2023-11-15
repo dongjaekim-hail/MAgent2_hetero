@@ -4,14 +4,7 @@ from arguments import args
 import argparse
 import numpy as np
 import torch as th
-# import wandb
-
-
-# wandb.init(project="MADQN", entity='hails')
-# wandb.run.name = 'semi3'
-
-
-
+import wandb
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gamma', type=float, default=0.95)
@@ -20,12 +13,19 @@ parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--eps', type=float, default=1.0)
 parser.add_argument('--eps_decay', type=float, default=0.995)
 parser.add_argument('--eps_min', type=float, default=0.01)
-parser.add_argument('--max_update_steps', type=int, default=4)
-parser.add_argument('--total_step', type=int, default=4)
+parser.add_argument('--max_update_steps', type=int, default=100)
+parser.add_argument('--total_ep', type=int, default=10000)
 parser.add_argument('--info_decay',type=int, default=0.5)
+parser.add_argument('--buffer_size', type=int, default=50000)
+parser.add_argument('--trainstart_buffersize', type=int, default=10000)
 
+device = 'cuda' if th.cuda.is_available() else 'cpu'
 
 args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
+
+wandb.init(project="MADQN", entity='hails',config=args.__dict__)
+wandb.run.name = 'semi4'
+
 
 render_mode = 'rgb_array'
 env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
@@ -48,7 +48,7 @@ predator2_view_range = 3
 
 
 shared = th.zeros(entire_state)
-madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state,shared)
+madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state, shared, device, buffer_size=args.buffer_size)
 
 def process_array(arr):
     # 3번째, 5번째, 7번째 차원 삭제
@@ -64,8 +64,9 @@ def process_array(arr):
 
 
 def main():
-	for ep in range(100000):
+	for ep in range(1000000):
 		ep_reward = 0
+
 
 		env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
 										max_cycles=args.max_update_steps, extra_features=False, render_mode=render_mode)
@@ -240,7 +241,7 @@ def main():
 
 						# 히스토리가 batchsize 보다 넘게 쌓였으면 업데이트를 진행한다.
 						# if madqn.buffer.size() >= args.batch_size:
-						if madqn.buffer.size() >= 10:
+						if madqn.buffer.size() >= args.trainstart_buffersize:
 							#print memory ize
 							# print("memory size:",madqn.buffer.size())
 							# print("replay")
@@ -279,17 +280,16 @@ def main():
 						last_reward = agent_rewards[-1] - agent_rewards[-2]
 						total_last_rewards += last_reward
 				# 각 리스트의 마지막 값들을 더한 결과 출력
+				ep_reward += total_last_rewards
 				print("predator팀의 전체 reward", total_last_rewards)
-				#wandb.log({"total_last_rewards": total_last_rewards})
+				wandb.log({"total_last_rewards": total_last_rewards })
 
 			iteration_number += 1
+		wandb.log({"ep_reward": ep_reward})
 
 
-
-
-
-		ep_reward += total_last_rewards
-		print("ep_reward:", ep_reward)
+		#ep_reward += total_last_rewards
+		#print("ep_reward:", ep_reward)
 
 		# if iteration_number > args.max_update_steps:
 		# 	print('*' * 10, 'train over', '*' * 10)
@@ -297,7 +297,7 @@ def main():
 		# 	break
 
 
-		if ep > args.total_step: #100
+		if ep > args.total_ep: #100
 			print('*' * 10, 'train over', '*' * 10)
 			print(iteration_number)
 			break
@@ -311,11 +311,9 @@ if __name__ == '__main__':
 	main()
 	#print('done')
 	#데이터 저장
-	# for i in range(len(madqn.gdqns)) :
-	# 	print(i)
-	# 	th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
-	# 	print("d")
-	# 	th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
+	for i in range(len(madqn.gdqns)) :
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
 
 
 	print('done')
