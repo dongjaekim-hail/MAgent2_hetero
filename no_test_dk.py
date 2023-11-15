@@ -23,8 +23,8 @@ device = 'cuda' if th.cuda.is_available() else 'cpu'
 
 args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
 
-wandb.init(project="MADQN", entity='hails',config=args.__dict__)
-wandb.run.name = 'semi4'
+# wandb.init(project="MADQN", entity='hails',config=args.__dict__)
+# wandb.run.name = 'semi4'
 
 
 render_mode = 'rgb_array'
@@ -282,10 +282,10 @@ def main():
 				# 각 리스트의 마지막 값들을 더한 결과 출력
 				ep_reward += total_last_rewards
 				print("predator팀의 전체 reward", total_last_rewards)
-				wandb.log({"total_last_rewards": total_last_rewards })
+				#wandb.log({"total_last_rewards": total_last_rewards })
 
 			iteration_number += 1
-		wandb.log({"ep_reward": ep_reward})
+		#wandb.log({"ep_reward": ep_reward})
 
 
 		#ep_reward += total_last_rewards
