@@ -302,6 +302,10 @@ def main():
 			print(iteration_number)
 			break
 
+		if ep % 1000:
+			for i in range(len(madqn.gdqns)) :
+				th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) + '_ep' +str(ep) +'.pt')
+				th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '_ep' + str(ep)+ '.pt')
 
 	print('*' * 10, 'train over', '*' * 10)
 	print(iteration_number)
