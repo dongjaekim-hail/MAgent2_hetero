@@ -23,8 +23,8 @@ parser.add_argument('--eps_min', type=float, default=0.01)
 parser.add_argument('--max_update_steps', type=int, default=100)
 parser.add_argument('--total_ep', type=int, default=10000)
 parser.add_argument('--info_decay',type=int, default=0.5)
-parser.add_argument('--buffer_size', type=int, default=50000)
-parser.add_argument('--trainstart_buffersize', type=int, default=10000)
+parser.add_argument('--buffer_size', type=int, default=10000)
+parser.add_argument('--trainstart_buffersize', type=int, default=8000)
 
 device = 'cuda' if th.cuda.is_available() else 'cpu'
 
@@ -235,7 +235,7 @@ def main():
 							observations_dict[idx].append(observation_temp)
 							action_dict[idx].append(action)
 							reward_dict[idx].append(reward)
-							book_dict[idx].append(book)
+							book_dict[idx].append(book.detach())
 
 							madqn.buffer.put(observations_dict[idx][step_idx-1], book_dict[idx][step_idx-1], action_dict[idx][step_idx-1], reward_dict[idx][step_idx]-reward_dict[idx][step_idx-1],
 											 observations_dict[idx][step_idx],book_dict[idx][step_idx] ,termination, truncation)
@@ -267,7 +267,7 @@ def main():
 						env.step(action)
 						#print(agent,"prey")
 
-			if iteration_number % 29 == 0 :   #한 step 마다  각 리스트의 마지막 값을 더하기
+			if (iteration_number+1) % 30 == 0 :   #한 step 마다  각 리스트의 마지막 값을 더하기
 
 				total_last_rewards = 0
 				for agent_rewards in reward_dict.values():
