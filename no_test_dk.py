@@ -6,13 +6,6 @@ import numpy as np
 import torch as th
 import wandb
 
-
-wandb.init(project="MADQN", entity='hails')
-wandb.run.name = 'semi4'
-
-
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--gamma', type=float, default=0.95)
 parser.add_argument('--lr', type=float, default=0.005)
@@ -29,6 +22,10 @@ parser.add_argument('--trainstart_buffersize', type=int, default=10000)
 device = 'cuda' if th.cuda.is_available() else 'cpu'
 
 args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
+
+wandb.init(project="MADQN", entity='hails',config=args.__dict__)
+wandb.run.name = 'semi4'
+
 
 render_mode = 'rgb_array'
 env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
