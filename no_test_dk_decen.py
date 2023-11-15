@@ -1,5 +1,5 @@
 from magent2.environments import hetero_adversarial_v1
-from MADQN import MADQN
+from MADQN_centralized import MADQN_cen
 from arguments import args
 import argparse
 import numpy as np
@@ -24,7 +24,7 @@ device = 'cuda' if th.cuda.is_available() else 'cpu'
 args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
 
 wandb.init(project="MADQN", entity='hails',config=args.__dict__)
-wandb.run.name = 'semi4'
+wandb.run.name = 'cen4'
 
 
 render_mode = 'rgb_array'
@@ -47,8 +47,8 @@ predator1_view_range = 5
 predator2_view_range = 3
 
 
-shared = th.zeros(entire_state)
-madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state, shared, device, buffer_size=args.buffer_size)
+# shared = th.zeros(entire_state)
+madqn = MADQN_cen(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,entire_state)
 
 def process_array(arr):
     # 3번째, 5번째, 7번째 차원 삭제
@@ -71,7 +71,7 @@ def main():
 		env = hetero_adversarial_v1.env(map_size=45, minimap_mode=False, tag_penalty=-0.2,
 										max_cycles=args.max_update_steps, extra_features=False, render_mode=render_mode)
 
-		madqn.reset_shred(shared) #매 에피소드마다 shared reset
+		# madqn.reset_shred(shared) #매 에피소드마다 shared reset
 		env.reset()
 		print("ep:",ep,'*' * 80)
 
@@ -112,10 +112,10 @@ def main():
 			truncation_dict[agent_idx] = []
 
 		# book  초기화
-		book_dict = {}
-		# 각 에이전트에 대한 딕셔너리 초기화
-		for agent_idx in range(n_predator1 + n_predator2):
-			book_dict[agent_idx] = []
+		# book_dict = {}
+		# # 각 에이전트에 대한 딕셔너리 초기화
+		# for agent_idx in range(n_predator1 + n_predator2):
+		# 	book_dict[agent_idx] = []
 
 		iteration_number = 0
 
@@ -167,7 +167,7 @@ def main():
 					observation, reward, termination, truncation, info  = env.last() #애초에 reward가 누적보상값이네 이거 수정이 필요하다.
 					#print(" 첫번째 last 가 반환하는 agent 의 정보",agent)
 					observation_temp = process_array(observation)
-					action, book = madqn.get_action(state=observation_temp, mask=None)
+					action = madqn.get_action(state=observation_temp, mask=None)
 					env.step(action)
 
 					observations_dict[idx].append(observation_temp)
@@ -175,7 +175,7 @@ def main():
 					reward_dict[idx].append(reward)
 					# termination_dict[idx].append(termination)
 					# truncation_dict[idx].append(truncation)
-					book_dict[idx].append(book)
+					# book_dict[idx].append(book)
 
 
 
@@ -226,16 +226,16 @@ def main():
 							continue
 
 						else:
-							action, book  = madqn.get_action(state=observation_temp, mask=None)
+							action = madqn.get_action(state=observation_temp, mask=None)
 							env.step(action)
 
 							observations_dict[idx].append(observation_temp)
 							action_dict[idx].append(action)
 							reward_dict[idx].append(reward)
-							book_dict[idx].append(book)
+							# book_dict[idx].append(book)
 
-							madqn.buffer.put(observations_dict[idx][step_idx-1], book_dict[idx][step_idx-1], action_dict[idx][step_idx-1], reward_dict[idx][step_idx]-reward_dict[idx][step_idx-1],
-											 observations_dict[idx][step_idx],book_dict[idx][step_idx] ,termination, truncation)
+							madqn.buffer.put(observations_dict[idx][step_idx-1], action_dict[idx][step_idx-1], reward_dict[idx][step_idx]-reward_dict[idx][step_idx-1],
+											 observations_dict[idx][step_idx],termination, truncation)
 						#reward_dict[idx]
 
 
@@ -304,8 +304,10 @@ def main():
 
 		if ep % 1000:
 			for i in range(len(madqn.gdqns)) :
-				th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) + '_ep' +str(ep) +'.pt')
-				th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '_ep' + str(ep)+ '.pt')
+				th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'decent_model_'+ str(i) +'.pt')
+				th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'decent_model_target_' + str(i) + '.pt')
+
+
 
 	print('*' * 10, 'train over', '*' * 10)
 	print(iteration_number)
@@ -316,8 +318,8 @@ if __name__ == '__main__':
 	#print('done')
 	#데이터 저장
 	for i in range(len(madqn.gdqns)) :
-		th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) +'.pt')
-		th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '.pt')
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'decent_model_'+ str(i) +'.pt')
+		th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'decent_model_' + str(i) + '.pt')
 
 
 	print('done')
