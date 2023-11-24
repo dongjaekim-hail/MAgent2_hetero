@@ -33,14 +33,12 @@ env = hetero_adversarial_v1.env(map_size=25, minimap_mode=False, tag_penalty=-0.
 								max_cycles=args.max_update_steps, extra_features=False,render_mode=render_mode)
 
 entire_state = (25,25,3)
-predator1_obs = (10,10,3)
-predator2_obs = (6,6,3)
 dim_act = 13
 n_predator1 = 10
 n_predator2 = 10
 n_prey = 10
-predator1_adj = (100,100)
-predator2_adj = (36,36)
+predator1_adj = (625,625)
+predator2_adj = (625,625)
 
 
 batch_size = 1
@@ -61,44 +59,34 @@ def process_array(arr):
 
 
 def main():
-    for ep in range(1000000):
-
-        ep_reward = 0
-
-        env = hetero_adversarial_v1.env(map_size=25, minimap_mode=False, tag_penalty=-0.2,
+	for ep in range(1000000):
+		ep_reward = 0
+		env = hetero_adversarial_v1.env(map_size=25, minimap_mode=False, tag_penalty=-0.2,
 										max_cycles=args.max_update_steps, extra_features=False, render_mode=render_mode)
 
-        env.reset()
-        print("ep:",ep,'*' * 80)
+		env.reset()
+		print("ep:",ep,'*' * 80)
+		iteration_number = 0
 
-        observations_dict = {}
-
-        for agent_idx in range(n_predator1 + n_predator2):
+		observations_dict = {}
+		for agent_idx in range(n_predator1 + n_predator2):
 			observations_dict[agent_idx] = []
 
 		reward_dict = {}
 		for agent_idx in range(n_predator1 + n_predator2):
 			reward_dict[agent_idx] = []
 
-
 		action_dict = {}
 		for agent_idx in range(n_predator1 + n_predator2):
 			action_dict[agent_idx] = []
-
 
 		termination_dict = {}
 		for agent_idx in range(n_predator1 + n_predator2):
 			termination_dict[agent_idx] = []
 
-
 		truncation_dict = {}
 		for agent_idx in range(n_predator1 + n_predator2):
 			truncation_dict[agent_idx] = []
-
-
-
-		iteration_number = 0
-
 
 
 
@@ -110,7 +98,13 @@ def main():
 
 				if agent[:8] == "predator":
 
-					idx = int(agent[11:])
+					#idx = int(agent[11:])
+
+					if agent[9] == "1":
+						idx = int(agent[11:])
+
+					else:
+						idx = int(agent[11:]) + n_predator1
 
 
 					madqn.set_agent_info(agent)
@@ -138,7 +132,13 @@ def main():
 
 				if agent[:8] == "predator":
 
-					idx = int(agent[11:])
+					#idx = int(agent[11:])
+					if agent[9] == "1":
+						idx = int(agent[11:])
+
+					else:
+						idx = int(agent[11:]) + n_predator1
+
 
 					madqn.set_agent_info(agent)
 
@@ -219,10 +219,10 @@ def main():
 		#ep_reward += total_last_rewards
 		#print("ep_reward:", ep_reward)
 
-		if iteration_number > args.max_update_steps:
-			print('*' * 10, 'train over', '*' * 10)
-			print(iteration_number)
-			break
+		# if iteration_number > args.max_update_steps:
+		# 	print('*' * 10, 'train over', '*' * 10)
+		# 	print(iteration_number)
+		# 	break
 
 
 		if ep > args.total_ep: #100
@@ -235,8 +235,9 @@ def main():
 		# 		th.save(madqn.gdqns[i].state_dict(), 'model_save/'+'model_'+ str(i) + '_ep' +str(ep) +'.pt')
 		# 		th.save(madqn.gdqns[i].state_dict(), 'model_save/' + 'model_target_' + str(i) + '_ep' + str(ep)+ '.pt')
 
-	#print('*' * 10, 'train over', '*' * 10)
+	print('*' * 10, 'train over', '*' * 10)
 	#print(iteration_number)
+	# env.state() # receives the entire state
 
 if __name__ == '__main__':
 	main()
@@ -248,5 +249,3 @@ if __name__ == '__main__':
 
 
 	print('done')
-
-

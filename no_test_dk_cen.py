@@ -7,8 +7,8 @@ import torch as th
 import wandb
 #
 
-wandb.init(project="MADQN", entity='hails')
-wandb.run.name = 'cen4'
+# wandb.init(project="MADQN", entity='hails')
+# wandb.run.name = 'cen4'
 
 
 device = 'cuda' if th.cuda.is_available() else'cpu'
@@ -281,7 +281,7 @@ def main():
 				# 각 리스트의 마지막 값들을 더한 결과 출력
 				ep_reward += total_last_rewards
 				print("predator팀의 전체 reward", total_last_rewards)
-				wandb.log({"total_last_rewards": total_last_rewards})
+				#wandb.log({"total_last_rewards": total_last_rewards})
 
 			iteration_number += 1
 
@@ -303,7 +303,7 @@ def main():
 		for agent_idx in range(n_predator1 + n_predator2):
 			observations_dict[agent_idx] = []
 
-		wandb.log({"ep_reward": ep_reward})
+		#wandb.log({"ep_reward": ep_reward})
 		print("ep_reward:", ep_reward)
 
 		# if iteration_number > args.max_update_steps:

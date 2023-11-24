@@ -14,24 +14,26 @@ class G_DQN(nn.Module):
         super(G_DQN, self).__init__()
         self.eps_decay = args.eps_decay
 
-        self.observation_state = observation_state
+        self.observation_state = observation_state #전채 state (25*25*3)
+        print(self.observation_state)
         self.dim_act = dim_act
 
         #GRAPH
-        self.dim_feature = observation_state[2]
+        self.dim_feature = self.observation_state[2] #3
         self.gnn1 = DenseSAGEConv(self.dim_feature, 128)
-        self.gnn2 = DenseSAGEConv(128, self.dim_feature*2) #feature 의 2배를 출력
-        self.sig = nn.Sigmoid() #sigmoid 도 이렇게 해야 하고..
+        self.gnn2 = DenseSAGEConv(128, self.dim_feature)
+        #self.sig = nn.Sigmoid() #sigmoid 는 아마 필요 없을 듯!
 
         #DQN
-        self.dim_input = observation_state[0] * observation_state[1] * observation_state[2]*2 #concat 해서 2배!
+        self.dim_input = self.observation_state[0] * self.observation_state[1] * self.observation_state[2]
+        print(self.dim_input)
         self.FC1 = nn.Linear(self.dim_input, 128)
         self.FC2 = nn.Linear(128, dim_act)
         # self.relu = nn.ReLU(inplace=True)
         self.relu = nn.ReLU()
 
 
-    def forward(self, x, adj, info): #x외 adj는 밖에서 넣어줘야 되고  GSAGE에 입력값 넣어주면 출력값 뱉고, from_guestbook 아예 크기에 맞는 (8*8*7)의 형태로 넣어주고
+    def forward(self, x, adj): #info 는 필요 없음
 
         try:
             torch.cuda.empty_cache()
@@ -43,26 +45,23 @@ class G_DQN(nn.Module):
             x = torch.tensor(x).float()
         else:
             pass
+
         x = self.gnn1(x.reshape(-1, self.dim_feature), adj)
         x = F.elu(self.gnn2(x,adj)).squeeze()  # exponential linear unit #squeeze 를 하는 이유: x가 batch_size를 고려해서 받을 수 있도록 설계 됐기 때문에 1*100*3꼴로 나옴->100*3으로 바꿔주기 위함
 
         #x = F.elu(self.gnn2(self.gnn1(x.reshape(-1, self.dim_feature) ,adj),adj)).squeeze()
-
-        dqn = x[:, :self.dim_feature]  #   100*3 : 위의 x중 절반은 dqn 으로 들어가고 나머지 절반은 sigmoid취해서 가져갈 것만 기록하도록 한다.
-
-        shared = self.sig(x[:, self.dim_feature:]) #share graph 로 들어갈 것! 가져오고
-        shared = dqn * shared # sigmoid 해준 값과 x를 dot곱해줌
-        shared = shared.reshape(self.observation_state).detach() #다시 10*10*5 꼴로 만들어주어야 함-> 이를 shared graph 에 넘겨주어야 한다.
-
-        #info에 decaying!
-        # input = torch.cat((shared, info), dim=0) #현재 info가 5*5*7 이라서 concatenate이 안됨->수정함
+        #dqn = x[:, :self.dim_feature]  #   100*3 : 위의 x중 절반은 dqn 으로 들어가고 나머지 절반은 sigmoid취해서 가져갈 것만 기록하도록 한다.
+        # shared = self.sig(x[:, self.dim_feature:]) #share graph 로 들어갈 것! 가져오고
+        # shared = dqn * shared # sigmoid 해준 값과 x를 dot곱해줌
+        # shared = shared.reshape(self.observation_state).detach() #다시 10*10*5 꼴로 만들어주어야 함-> 이를 shared graph 에 넘겨주어야 한다.
 
 
-        x = torch.cat((shared, info), dim=0).reshape(-1, self.dim_input) #쭉 펴주고
+        x = x.reshape(-1, self.dim_input) #쭉 펴주고
+        print(x.shape,"#"*100)
         x = self.FC1(x)
         x = self.FC2(x)
 
-        return x, shared #shared_graph에 넣는건 밖에서 진행하자.
+        return x
 
 
 
@@ -71,8 +70,8 @@ class ReplayBuffer:
    def __init__(self, capacity=10000):
       self.buffer = deque(maxlen=capacity)
 
-   def put(self, observation, book , action , reward, next_observation, book_next, termination, truncation):
-       self.buffer.append([observation, book, action , reward, next_observation, book_next, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
+   def put(self, observation, action , reward, next_observation, termination, truncation):
+       self.buffer.append([observation, action , reward, next_observation, termination, truncation]) #[state, action, reward, next_state, done]리스트 형태로 history를 저장
 
 
 
