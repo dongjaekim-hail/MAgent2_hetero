@@ -237,7 +237,7 @@ def main():
 							madqn.replay()
 
 						#총 1000000번의 iteration 중에 10000번 돌고서 target_update를 진행한다.
-						if iteration_number % 10000 == 0
+						if iteration_number % 10000 == 0 :
 							madqn.target_update()
 
 
