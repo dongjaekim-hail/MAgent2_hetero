@@ -168,6 +168,10 @@ def main():
 							madqn.replay()
 							madqn.target_update()
 
+						# 총 1000000번의 iteration 중에 10000번 돌고서 target_update를 진행한다.
+						if iteration_number % 10000 == 0:
+							madqn.target_update()
+
 
 
 				else:  #두번째 step 이후 prey
@@ -180,7 +184,7 @@ def main():
 
 					else:
 						action = env.action_space(agent).sample()
-						env.step(action)
+						env.step(0)
 
 
 

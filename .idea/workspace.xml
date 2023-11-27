@@ -6,50 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_0_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_10_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_11_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_12_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_13_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_14_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_15_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_16_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_17_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_18_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_19_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_1_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_2_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_3_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_4_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_5_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_6_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_7_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_8_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_9_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_0_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_10_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_11_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_12_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_13_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_14_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_15_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_16_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_17_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_18_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_19_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_1_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_2_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_3_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_4_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_5_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_6_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_7_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_8_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_save/model_target_9_ep0.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/no_test_dk_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/no_test_dk_2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wandb/debug-internal.log" beforeDir="false" afterPath="$PROJECT_DIR$/wandb/debug-internal.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wandb/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/wandb/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wandb/latest-run" beforeDir="false" afterPath="$PROJECT_DIR$/wandb/latest-run" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

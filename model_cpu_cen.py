@@ -78,8 +78,8 @@ class ReplayBuffer:
    def sample(self):
        sample = random.sample(self.buffer, 1)  # batch size만큼 buffer에서 가져온다.
 
-       observation, book , action , reward, next_observation, book_next, termination, truncation = zip(*sample)
-       return observation, book , action , reward, next_observation, book_next, termination, truncation  # buffer에서 데이터 받아서 반환하는 과정을 거침
+       observation , action , reward, next_observation,  termination, truncation = zip(*sample)
+       return observation,  action , reward, next_observation, termination, truncation  # buffer에서 데이터 받아서 반환하는 과정을 거침
 
    def size(self):
       return len(self.buffer)   #buffer 사이즈길이만큼 뱉는 것
