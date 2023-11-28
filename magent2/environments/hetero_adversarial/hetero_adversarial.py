@@ -157,12 +157,6 @@ env = make_env(raw_env)
 def get_config(map_size, minimap_mode, tag_penalty):
     gw = magent2.gridworld
     cfg = gw.Config()
-                                    #그냥 우선 gridworld 통채로 가져오고 그 중에서 Config 클래스 객체만 하나 만든다.
-                                    #이때, cfg에는 다음과 같은  변수들이 존재한다.
-                                    # self.config_dict = {}
-                                    # self.agent_type_dict = {}
-                                    # self.groups = []
-                                    # self.reward_rules = []
 
 
                                     #cfg.set( )에 넘겨준 인자들(딕셔너리들)을 config_dict에 그대로 복사한다.
@@ -234,8 +228,8 @@ def get_config(map_size, minimap_mode, tag_penalty):
     a_1 = gw.AgentSymbol(predator_group[1], index="any")  #a_1=agent(1,-1)
 
     b_0 = gw.AgentSymbol(prey_group[0], index="any")      #b=agent(3,-1)   근데 이건 한번만 실행됨
-    cfg.add_reward_rule(gw.Event(a_0, "attack", b_0), receiver=[a_0, b_0], value=[2, -1])
-    cfg.add_reward_rule(gw.Event(a_1, "attack", b_0), receiver=[a_1, b_0], value=[2, -1])
+    cfg.add_reward_rule(gw.Event(a_0, "attack", b_0), receiver=[a_0, b_0], value=[3, -1])
+    cfg.add_reward_rule(gw.Event(a_1, "attack", b_0), receiver=[a_1, b_0], value=[3, -1])
     #cfg.add_reward_rule(gw.Event(a_0, "attack", b_0), receiver=[a_0], value=[1, -1])
     # cfg.add_reward_rule(gw.Event(a_1, "attack", b_0), receiver=[a_1], value=[1, -1])
 
@@ -300,7 +294,7 @@ class _parallel_env(magent_parallel_env, EzPickle):
 
         #env.add_walls(method="random", n=map_size * map_size * 0.015)
         env.add_walls(method="random", n=0)
-        env.add_agents(handles[0], method="random", n=map_size * map_size * 0.016) #12.6->12개
-        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.016)
-        env.add_agents(handles[2], method="random", n=map_size * map_size * 0.016)
+        env.add_agents(handles[0], method="random", n=map_size * map_size * 0.0125) #12.6->12개
+        env.add_agents(handles[1], method="random", n=map_size * map_size * 0.0125)
+        env.add_agents(handles[2], method="random", n=map_size * map_size * 0.0125)
         #env.add_agents(handles[3], method="random", n=map_size * map_size * 0.005)  #25.3 ->25개
