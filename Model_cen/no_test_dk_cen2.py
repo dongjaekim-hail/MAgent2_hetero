@@ -1,49 +1,31 @@
 from magent2.environments import hetero_adversarial_v1
-from MADQN_cpu_cen import MADQN
-from arguments import args
-import argparse
-import numpy as np
-import torch as th
+from MADQN_cpu_cen import MADQN, args
 import wandb
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--gamma', type=float, default=0.95)
-parser.add_argument('--lr', type=float, default=0.005)
-parser.add_argument('--batch_size', type=int, default=32)
-parser.add_argument('--eps', type=float, default=1.0)
-parser.add_argument('--eps_decay', type=float, default=0.995)
-parser.add_argument('--eps_min', type=float, default=0.01)
-parser.add_argument('--max_update_steps', type=int, default=100)
-parser.add_argument('--total_ep', type=int, default=10000)
-parser.add_argument('--info_decay',type=int, default=0.5)
-parser.add_argument('--buffer_size', type=int, default=50000)
-parser.add_argument('--trainstart_buffersize', type=int, default=10000)
-parser.add_argument('--book_decay',type=int, default=0.8)
+import numpy as np
+
 
 device = 'cpu'
 
-args = parser.parse_args()  #Namespace(gamma=0.95, lr=0.005, batch_size=32, eps=1.0, eps_decay=0.995, eps_min=0.01)
 
-# wandb.init(project="MADQN", entity='hails',config=args.__dict__)
-# wandb.run.name = 'semi9_cpu_mapsize=25'
+
+wandb.init(project="MADQN", entity='hails',config=args.__dict__)
+wandb.run.name = 'semi9_cpu_mapsize=25'
 
 
 render_mode = 'rgb_array'
-env = hetero_adversarial_v1.env(map_size=25, minimap_mode=False, tag_penalty=-0.2,
+env = hetero_adversarial_v1.env(map_size=args.map_size, minimap_mode=False, tag_penalty=-0.2,
 								max_cycles=args.max_update_steps, extra_features=False,render_mode=render_mode)
 
-entire_state = (25,25,3)
+entire_state = (args.map_size,args.map_size,3)
 dim_act = 13
-n_predator1 = 10
-n_predator2 = 10
-n_prey = 10
-predator1_adj = (625,625)
-predator2_adj = (625,625)
+n_predator1 = args.n_predator1
+n_predator2 = args.n_predator1
+n_prey = args.n_prey
 
+# predator1_adj = (625,625)
+# predator2_adj = (625,625)
 
-batch_size = 1
-predator1_view_range = 5
-predator2_view_range = 3
 
 
 #shared = th.zeros(entire_state)
@@ -61,7 +43,7 @@ def process_array(arr):
 def main():
 	for ep in range(1000000):
 		ep_reward = 0
-		env = hetero_adversarial_v1.env(map_size=25, minimap_mode=False, tag_penalty=-0.2,
+		env = hetero_adversarial_v1.env(map_size=args.map_size, minimap_mode=False, tag_penalty=-0.2,
 										max_cycles=args.max_update_steps, extra_features=False, render_mode=render_mode)
 
 		env.reset()
@@ -216,10 +198,10 @@ def main():
 
 				ep_reward += total_last_rewards
 				print("predator_total_reward", total_last_rewards)
-				#wandb.log({"total_last_rewards": total_last_rewards })
+				wandb.log({"total_last_rewards": total_last_rewards })
 
 			iteration_number += 1
-		#wandb.log({"ep_reward": ep_reward})
+		wandb.log({"ep_reward": ep_reward})
 
 
 		#ep_reward += total_last_rewards

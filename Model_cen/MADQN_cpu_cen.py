@@ -5,20 +5,40 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 from arguments import args
-
-#entire_state = (65, 65, 3)
-#predator1_obs = (10, 10, 3)
-#predator2_obs = (6, 6, 3)
-dim_act = 13
-n_predator1 = 10
-n_predator2 = 10
-eps_decay = 0.1
-#batch_size = 10
-predator1_adj = (625,625)
-predator2_adj = (625,625)
-
 import argparse
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--gamma', type=float, default=0.95)
+parser.add_argument('--lr', type=float, default=0.005)
+parser.add_argument('--batch_size', type=int, default=32)
+parser.add_argument('--eps', type=float, default=0.99)
+parser.add_argument('--eps_decay', type=float, default=0.995)
+parser.add_argument('--eps_min', type=float, default=0.01)
+parser.add_argument('--max_update_steps', type=int, default=100)
+parser.add_argument('--total_ep', type=int, default=10000)
+parser.add_argument('--info_decay',type=int, default=0.5)
+parser.add_argument('--buffer_size', type=int, default=50000)
+parser.add_argument('--trainstart_buffersize', type=int, default=10000)
+parser.add_argument('--book_decay',type=int, default=0.8)
+parser.add_argument('--map_size',type=int, default=20)
+parser.add_argument('--predator1_view_range',type=int, default=8)
+parser.add_argument('--predator2_view_range',type=int, default=3)
+parser.add_argument('--n_predator1',type=int, default=5)
+parser.add_argument('--n_predator2',type=int, default=5)
+parser.add_argument('--n_prey',type=int, default=5)
+
+args = parser.parse_args()
+
+dim_act = 13
+n_predator1 = args.n_predator1
+n_predator2 = args.n_predator2
+
+predator1_view_range = args.map_size
+predator2_view_range = args.map_size
+
+predator1_adj = ((predator1_view_range)**2,(predator1_view_range)**2)
+predator2_adj = ((predator2_view_range)**2,(predator2_view_range)**2)
 
 
 class MADQN():  # def __init__(self,  dim_act, observation_state):
@@ -86,7 +106,7 @@ class MADQN():  # def __init__(self,  dim_act, observation_state):
 
     def get_action(self, state, mask=None):
 
-        q_value = self.gdqn(torch.tensor(state).to(self.device), self.adj.to(self.device)) #shared_info : shared graph? ????? ? ???
+        q_value = self.gdqn(torch.tensor(state).to(self.device), self.adj.to(self.device))
 
 
         self.epsilon *= args.eps_decay

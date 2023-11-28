@@ -1,7 +1,5 @@
 from magent2.environments import hetero_adversarial_v1
-
-from arguments import args
-from MADQN import MADQN, args
+from Model.MADQN import MADQN, args
 import argparse
 import numpy as np
 import torch as th
