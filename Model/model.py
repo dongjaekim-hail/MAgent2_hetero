@@ -43,6 +43,7 @@ class G_DQN(nn.Module):
             x = torch.tensor(x).float()
         else:
             pass
+
         x = self.gnn1(x.reshape(-1, self.dim_feature), adj)
         x = F.elu(self.gnn2(x,adj)).squeeze()  # exponential linear unit #squeeze 를 하는 이유: x가 batch_size를 고려해서 받을 수 있도록 설계 됐기 때문에 1*100*3꼴로 나옴->100*3으로 바꿔주기 위함
 
@@ -53,9 +54,6 @@ class G_DQN(nn.Module):
         shared = self.sig(x[:, self.dim_feature:]) #share graph 로 들어갈 것! 가져오고
         shared = dqn * shared # sigmoid 해준 값과 x를 dot곱해줌
         shared = shared.reshape(self.observation_state).detach() #다시 10*10*5 꼴로 만들어주어야 함-> 이를 shared graph 에 넘겨주어야 한다.
-
-        #info에 decaying!
-        # input = torch.cat((shared, info), dim=0) #현재 info가 5*5*7 이라서 concatenate이 안됨->수정함
 
 
         x = torch.cat((shared, info), dim=0).reshape(-1, self.dim_input) #쭉 펴주고

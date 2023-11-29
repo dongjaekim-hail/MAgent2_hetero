@@ -65,80 +65,66 @@ def main():
 		env = hetero_adversarial_v1.env(map_size=args.map_size, minimap_mode=False, tag_penalty=-0.2,
 										max_cycles=args.max_update_steps, extra_features=False, render_mode=render_mode)
 
-		madqn.reset_shred(shared) #? ?????? shared reset
+		madqn.reset_shred(shared)
 		env.reset()
 		print("ep:",ep,'*' * 80)
 
-		# observation ???? ???
+
 		observations_dict = {}
-		# ? ????? ?? ???? ???
+
 		for agent_idx in range(n_predator1 + n_predator2):
 			observations_dict[agent_idx] = []
 
-		# # next_observation ???? ???
-		# next_observations_dict = {}
-		# # ? ????? ?? ???? ???
-		# for agent_idx in range(n_predator1 + n_predator2):
-		# 	next_observations_dict[agent_idx] = []
 
-		# reward ???? ???
 		reward_dict = {}
-		# ? ????? ?? ???? ???
+
 		for agent_idx in range(n_predator1 + n_predator2):
 			reward_dict[agent_idx] = []
 
-		# action ???? ???
+
 		action_dict = {}
-		# ? ????? ?? ???? ???
+
 		for agent_idx in range(n_predator1 + n_predator2):
 			action_dict[agent_idx] = []
 
-		# termination ???? ???
+
 		termination_dict = {}
-		# ? ????? ?? ???? ???
+
 		for agent_idx in range(n_predator1 + n_predator2):
 			termination_dict[agent_idx] = []
 
-		#truncation ???
+
 		truncation_dict = {}
 		# ? ????? ?? ???? ???
 		for agent_idx in range(n_predator1 + n_predator2):
 			truncation_dict[agent_idx] = []
 
-		# book  ???
+
 		book_dict = {}
-		# ? ????? ?? ???? ???
+
 		for agent_idx in range(n_predator1 + n_predator2):
 			book_dict[agent_idx] = []
 
 		iteration_number = 0
 
 
-		##########################################################################
-		##env.last() ???? ?? agent? ????? ????? for?? ?? ???? ????.##
-		##########################################################################
 
 
 		for agent in env.agent_iter():
 
 			step_idx = iteration_number // 30
-			# if step_idx == 100: #step_idx=100 ?? ?? ep?
-			# 	print('ah')
-			# 	break
 
 			if step_idx == 0:   #첫번째 step
 
-				# print(iteration_number,"step_idx ???")
-				# print(step_idx,"step_idx")
 
 				if agent[:8] == "predator":
 
-					#??? ?? predator?? ?? ??
+
 					handles = env.env.env.env.env.get_handles()
 					pos_predator1 = env.env.env.env.env.get_pos(handles[0])
 					pos_predator2 = env.env.env.env.env.get_pos(handles[1])
 
-					#???? ???? ?? pos ???? ??
+
 					if agent[9] == "1":
 						idx = int(agent[11:])
 
@@ -151,14 +137,10 @@ def main():
 						view_range = predator2_view_range
 
 
-
-
 					madqn.set_agent_info(agent, pos, view_range)
 
 
-
-
-					observation, reward, termination, truncation, info  = env.last()
+					observation, reward, termination, truncation, info = env.last()
 
 					observation_temp = process_array(observation)
 					action, book = madqn.get_action(state=observation_temp, mask=None)
@@ -174,7 +156,7 @@ def main():
 				else:
 
 					action = env.action_space(agent).sample()
-					env.step(0)
+					env.step(action)
 
 			else: #두번째 step 이후
 

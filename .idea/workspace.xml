@@ -7,10 +7,6 @@
     <list default="true" id="18704819-d008-4796-8b4a-7a6970ccf3e9" name="변경" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Model/MADQN.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model/MADQN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Model/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Model/no_test_dk_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model/no_test_dk_2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Model_cen/MADQN_cpu_cen.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model_cen/MADQN_cpu_cen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Model_cen/no_test_dk_cen2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model_cen/no_test_dk_cen2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
