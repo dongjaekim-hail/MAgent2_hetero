@@ -43,7 +43,6 @@ class G_DQN(nn.Module):
             x = torch.tensor(x).float()
         else:
             pass
-
         x = self.gnn1(x.reshape(-1, self.dim_feature), adj)
         x = F.elu(self.gnn2(x,adj)).squeeze()  # exponential linear unit #squeeze 를 하는 이유: x가 batch_size를 고려해서 받을 수 있도록 설계 됐기 때문에 1*100*3꼴로 나옴->100*3으로 바꿔주기 위함
 

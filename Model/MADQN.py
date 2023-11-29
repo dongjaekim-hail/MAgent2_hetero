@@ -37,9 +37,9 @@ n_predator1 = args.n_predator1
 n_predator2 = args.n_predator2
 n_prey = args.n_prey
 
-shared_shape = (args.map_size + predator1_view_range*2 ,args.map_size + predator1_view_range*2,3) #25+8+8=41
-predator1_obs = (predator1_view_range*2,predator1_view_range*2,3)
-predator2_obs = (predator2_view_range*2,predator2_view_range*2,3)
+shared_shape = (args.map_size + predator1_view_range*2 ,args.map_size + predator1_view_range*2,2) #25+8+8=41
+predator1_obs = (predator1_view_range*2,predator1_view_range*2,2)
+predator2_obs = (predator2_view_range*2,predator2_view_range*2,2)
 
 dim_act = 13
 

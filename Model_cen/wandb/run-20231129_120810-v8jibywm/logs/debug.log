@@ -1,0 +1,39 @@
+2023-11-29 12:08:10,501 INFO    MainThread:23370 [wandb_setup.py:_flush():76] Current SDK version is 0.15.8
+2023-11-29 12:08:10,501 INFO    MainThread:23370 [wandb_setup.py:_flush():76] Configure stats pid to 23370
+2023-11-29 12:08:10,501 INFO    MainThread:23370 [wandb_setup.py:_flush():76] Loading settings from /Users/junhyeonbae/.config/wandb/settings
+2023-11-29 12:08:10,501 INFO    MainThread:23370 [wandb_setup.py:_flush():76] Loading settings from /Users/junhyeonbae/PycharmProjects/MAgent2_hetero/Model_cen/wandb/settings
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'Model_cen/no_test_dk_cen2.py', 'program': '/Users/junhyeonbae/PycharmProjects/MAgent2_hetero/Model_cen/no_test_dk_cen2.py'}
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_init.py:_log_setup():507] Logging user logs to /Users/junhyeonbae/PycharmProjects/MAgent2_hetero/Model_cen/wandb/run-20231129_120810-v8jibywm/logs/debug.log
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_init.py:_log_setup():508] Logging internal logs to /Users/junhyeonbae/PycharmProjects/MAgent2_hetero/Model_cen/wandb/run-20231129_120810-v8jibywm/logs/debug-internal.log
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_init.py:init():547] calling init triggers
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_init.py:init():554] wandb.init called with sweep_config: {}
+config: {'gamma': 0.95, 'lr': 0.005, 'batch_size': 32, 'eps': 0.99, 'eps_decay': 0.995, 'eps_min': 0.01, 'max_update_steps': 100, 'total_ep': 10000, 'info_decay': 0.5, 'buffer_size': 50000, 'trainstart_buffersize': 10000, 'book_decay': 0.8, 'map_size': 20, 'predator1_view_range': 8, 'predator2_view_range': 3, 'n_predator1': 5, 'n_predator2': 5, 'n_prey': 5}
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_init.py:init():596] starting backend
+2023-11-29 12:08:10,502 INFO    MainThread:23370 [wandb_init.py:init():600] setting up manager
+2023-11-29 12:08:10,509 INFO    MainThread:23370 [backend.py:_multiprocessing_setup():106] multiprocessing start_methods=spawn,fork,forkserver, using: spawn
+2023-11-29 12:08:10,511 INFO    MainThread:23370 [wandb_init.py:init():606] backend started and connected
+2023-11-29 12:08:10,520 INFO    MainThread:23370 [wandb_init.py:init():697] updated telemetry
+2023-11-29 12:08:10,538 INFO    MainThread:23370 [wandb_init.py:init():730] communicating run to backend with 60.0 second timeout
+2023-11-29 12:08:11,205 INFO    MainThread:23370 [wandb_run.py:_on_init():2180] communicating current version
+2023-11-29 12:08:11,265 INFO    MainThread:23370 [wandb_run.py:_on_init():2189] got version response upgrade_message: "wandb version 0.16.0 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2023-11-29 12:08:11,265 INFO    MainThread:23370 [wandb_init.py:init():781] starting run threads in backend
+2023-11-29 12:08:11,507 WARNING MainThread:23370 [wandb_init.py:init():1169] interrupted
+Traceback (most recent call last):
+  File "/Users/junhyeonbae/anaconda3/envs/MAgent2_hetero/lib/python3.8/site-packages/wandb/sdk/wandb_init.py", line 1147, in init
+    run = wi.init()
+  File "/Users/junhyeonbae/anaconda3/envs/MAgent2_hetero/lib/python3.8/site-packages/wandb/sdk/wandb_init.py", line 792, in init
+    run_start_result = run_start_handle.wait(timeout=30)
+  File "/Users/junhyeonbae/anaconda3/envs/MAgent2_hetero/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 283, in wait
+    found, abandoned = self._slot._get_and_clear(timeout=wait_timeout)
+  File "/Users/junhyeonbae/anaconda3/envs/MAgent2_hetero/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 130, in _get_and_clear
+    if self._wait(timeout=timeout):
+  File "/Users/junhyeonbae/anaconda3/envs/MAgent2_hetero/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 126, in _wait
+    return self._event.wait(timeout=timeout)
+  File "/Users/junhyeonbae/anaconda3/envs/MAgent2_hetero/lib/python3.8/threading.py", line 558, in wait
+    signaled = self._cond.wait(timeout)
+  File "/Users/junhyeonbae/anaconda3/envs/MAgent2_hetero/lib/python3.8/threading.py", line 306, in wait
+    gotit = waiter.acquire(True, timeout)
+KeyboardInterrupt

@@ -23,9 +23,9 @@ n_predator1 = args.n_predator1
 n_predator2 = args.n_predator2
 n_prey = args.n_prey
 
-shared_shape = (args.map_size + predator1_view_range*2 ,args.map_size + predator1_view_range*2,3)
-predator1_obs = (predator1_view_range*2,predator1_view_range*2,3)
-predator2_obs = (predator2_view_range*2,predator2_view_range*2,3)
+shared_shape = (args.map_size + predator1_view_range*2 ,args.map_size + predator1_view_range*2,2)
+predator1_obs = (predator1_view_range*2,predator1_view_range*2,2)
+predator2_obs = (predator2_view_range*2,predator2_view_range*2,2)
 dim_act = 13
 
 predator1_adj = ((predator1_view_range*2)^2,(predator1_view_range*2)^2)
@@ -37,15 +37,25 @@ batch_size = 1
 shared = th.zeros(shared_shape)
 madqn = MADQN(n_predator1, n_predator2, predator1_obs, predator2_obs, dim_act ,shared_shape, shared, device, buffer_size=args.buffer_size)
 
+# def process_array(arr): 잘못됐음
+#
+#     arr = np.delete(arr, [2, 4, 6], axis=2)
+#
+#     combined_dim = np.logical_or(arr[:, :, 2], arr[:, :, 3])
+#
+#     result = np.dstack((arr[:, :, :2], combined_dim))
+#
+#     return result
+
 def process_array(arr):
 
-    arr = np.delete(arr, [2, 4, 6], axis=2)
-
-    combined_dim = np.logical_or(arr[:, :, 2], arr[:, :, 3])
-
-    result = np.dstack((arr[:, :, :2], combined_dim))
-
-    return result
+	arr = np.delete(arr, [0, 2, 4, 6], axis=2)
+	#print(arr.shape,"arr.shape")
+	combined_dim = np.logical_or(arr[:, :, 0], arr[:, :, 1])
+	#print(combined_dim.shape,"combinde_dim.shape")
+	result = np.dstack((arr[:, :, 2], combined_dim))
+	#print(result.shape, "result.shape")
+	return result
 
 
 def main():

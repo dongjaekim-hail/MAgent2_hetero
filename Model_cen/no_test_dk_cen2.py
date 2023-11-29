@@ -9,15 +9,15 @@ device = 'cpu'
 
 
 
-wandb.init(project="MADQN", entity='hails',config=args.__dict__)
-wandb.run.name = 'semi9_cpu_mapsize=25'
+# wandb.init(project="MADQN", entity='hails',config=args.__dict__)
+# wandb.run.name = 'semi9_cpu_mapsize=25'
 
 
 render_mode = 'rgb_array'
 env = hetero_adversarial_v1.env(map_size=args.map_size, minimap_mode=False, tag_penalty=-0.2,
 								max_cycles=args.max_update_steps, extra_features=False,render_mode=render_mode)
 
-entire_state = (args.map_size,args.map_size,3)
+entire_state = (args.map_size,args.map_size,2)
 dim_act = 13
 n_predator1 = args.n_predator1
 n_predator2 = args.n_predator1
@@ -31,13 +31,23 @@ n_prey = args.n_prey
 #shared = th.zeros(entire_state)
 madqn = MADQN(n_predator1, n_predator2, dim_act ,entire_state, device, buffer_size=args.buffer_size)
 
+# def process_array(arr):
+#
+#     arr = np.delete(arr, [2, 4, 6], axis=2)
+#     combined_dim = np.logical_or(arr[:, :, 2], arr[:, :, 3])
+#     result = np.dstack((arr[:, :, :2], combined_dim))
+#
+#     return result
+
 def process_array(arr):
 
-    arr = np.delete(arr, [2, 4, 6], axis=2)
-    combined_dim = np.logical_or(arr[:, :, 2], arr[:, :, 3])
-    result = np.dstack((arr[:, :, :2], combined_dim))
-
-    return result
+	arr = np.delete(arr, [0, 2, 4, 6], axis=2)
+	#print(arr.shape,"arr.shape")
+	combined_dim = np.logical_or(arr[:, :, 0], arr[:, :, 1])
+	#print(combined_dim.shape,"combinde_dim.shape")
+	result = np.dstack((arr[:, :, 2], combined_dim))
+	#print(result.shape, "result.shape")
+	return result
 
 
 def main():
@@ -198,10 +208,10 @@ def main():
 
 				ep_reward += total_last_rewards
 				print("predator_total_reward", total_last_rewards)
-				wandb.log({"total_last_rewards": total_last_rewards })
+				#wandb.log({"total_last_rewards": total_last_rewards })
 
 			iteration_number += 1
-		wandb.log({"ep_reward": ep_reward})
+		#wandb.log({"ep_reward": ep_reward})
 
 
 		#ep_reward += total_last_rewards
