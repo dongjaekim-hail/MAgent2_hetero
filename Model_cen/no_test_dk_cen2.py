@@ -9,8 +9,8 @@ device = 'cpu'
 
 
 
-wandb.init(project="MADQN", entity='hails',config=args.__dict__)
-wandb.run.name = 'semi21'
+# wandb.init(project="MADQN", entity='hails',config=args.__dict__)
+# wandb.run.name = 'semi21'
 
 
 render_mode = 'rgb_array'
