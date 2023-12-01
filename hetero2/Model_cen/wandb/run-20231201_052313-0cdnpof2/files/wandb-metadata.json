@@ -1,0 +1,128 @@
+{
+    "os": "Linux-5.15.0-89-generic-x86_64-with-glibc2.17",
+    "python": "3.8.18",
+    "heartbeatAt": "2023-12-01T05:23:14.181578",
+    "startedAt": "2023-12-01T05:23:13.327398",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/hail09/Desktop/hetero2/Model_cen/no_test_dk_cen2.py",
+    "codePathLocal": "no_test_dk_cen2.py",
+    "codePath": "hetero2/Model_cen/no_test_dk_cen2.py",
+    "git": {
+        "remote": "https://github.com/dongjaekim-hail/MAgent2_hetero.git",
+        "commit": "faae1082468f21e158ecdad4e456260c7353d01e"
+    },
+    "email": "dongjaekim@dankook.ac.k",
+    "root": "/home/hail09/Desktop",
+    "host": "hail09",
+    "username": "hail09",
+    "executable": "/home/hail09/anaconda3/envs/MAgent/bin/python",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 1569.850125,
+        "min": 1200.0,
+        "max": 3000.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 3000.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 2000.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1500.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 2017.602,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1900.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1200.0,
+            "min": 1200.0,
+            "max": 3000.0
+        },
+        {
+            "current": 1900.0,
+            "min": 1200.0,
+            "max": 3000.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 97.87200164794922,
+            "used": 46.817203521728516
+        }
+    },
+    "gpu": "NVIDIA GeForce GTX 1080 Ti",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce GTX 1080 Ti",
+            "memory_total": 11811160064
+        }
+    ],
+    "memory": {
+        "total": 62.63917541503906
+    }
+}
